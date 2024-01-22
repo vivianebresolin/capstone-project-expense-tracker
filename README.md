@@ -3,6 +3,7 @@ The Expense Tracker app is designed to help users manage and track their expense
 
 ## Group 16
 - Viviane Viana Bresolin
+- Papko Kristina
 
 ## Features
 - Users can quickly record their daily expenses with a user-friendly interface

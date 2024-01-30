@@ -12,6 +12,6 @@ The CashCompass app is designed to help users manage and track their expenses ef
 - Users can see a total expenses that is instantly updated when the filter is changed
 - Users can view charts that provide insights into expense patterns
 - Users can delete all the app data
-- Users have the option to populate the app with fake data just to facilitate testing and exploration of the app's features without the need to manually input data 
+- Users can edit and delete expenses
 - Users can set the app to dark mode using the app preferences
 

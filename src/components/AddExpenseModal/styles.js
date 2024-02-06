@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   modalView: {
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    width: '70%',
+    width: '85%',
     borderRadius: 10,
     padding: 10,
     ...Platform.select({
@@ -24,6 +24,19 @@ const styles = StyleSheet.create({
         elevation: 4,
       },
     }),
+  },
+  textContainer: {
+    marginTop: 18,
+    display: 'flex',
+    gap: 8
+  },
+  h1: {
+    textAlign: 'center',
+    fontSize: 24,
+  },
+  h2: {
+    textAlign: 'center',
+    fontSize: 18,
   },
 });
 

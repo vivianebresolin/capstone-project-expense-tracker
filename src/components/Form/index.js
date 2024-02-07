@@ -32,19 +32,17 @@ export default function Form({ closeModal, modalVisible }) {
         setDescription('');
         setSelectedDate(new Date());
 
-        setTimeout(() => {
-          setIsSavingExpense(false)
-        }, 10000)
+        setIsSavingExpense(false)
 
-        // Alert.alert('Add expense', 'Expense added successfully!', [
-        //   {
-        //     text: 'Home',
-        //     onPress: () => closeModal(!modalVisible),
-        //   },
-        //   {
-        //     text: 'Add other expense',
-        //   }
-        // ]);
+        Alert.alert('Add expense', 'Expense added successfully!', [
+          {
+            text: 'Home',
+            onPress: () => closeModal(!modalVisible),
+          },
+          {
+            text: 'Add other expense',
+          }
+        ]);
       })
       .catch(error => {
         setIsSavingExpense(false);

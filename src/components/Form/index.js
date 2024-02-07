@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { formatDateString } from './../../utils/utils';
+import * as db from '../../database/index';
+import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 
 export default function Form({ closeModal, modalVisible }) {
@@ -21,22 +22,34 @@ export default function Form({ closeModal, modalVisible }) {
 
     setIsSavingExpense(true);
 
-    console.log(amount, description, selectedDate);
+    await db.addExpense(amount, description, selectedDate)
+      .then((result) => {
+        // const updatedExpenses = [...expensesList];
+        // updatedExpenses.push(result);
+        // updateExpensesList(updatedExpenses);
 
-    setAmount('');
-    setDescription('');
-    setSelectedDate(new Date());
+        setAmount('');
+        setDescription('');
+        setSelectedDate(new Date());
 
-    setIsSavingExpense(false);
+        setTimeout(() => {
+          setIsSavingExpense(false)
+        }, 10000)
 
-    Alert.alert('Add expense', 'Expense added successfully!', [{
-      text: 'Home',
-      onPress: () => closeModal(!modalVisible),
-    },
-    {
-      text: 'Add other expense',
-    }
-    ]);
+        // Alert.alert('Add expense', 'Expense added successfully!', [
+        //   {
+        //     text: 'Home',
+        //     onPress: () => closeModal(!modalVisible),
+        //   },
+        //   {
+        //     text: 'Add other expense',
+        //   }
+        // ]);
+      })
+      .catch(error => {
+        setIsSavingExpense(false);
+        Alert.alert('Error', `Error trying to add new expense: ${error}`)
+      })
   };
 
   const toggleDatePicker = () => {
@@ -69,7 +82,7 @@ export default function Form({ closeModal, modalVisible }) {
     return (
       <View style={styles.containerSavingExpense}>
         <ActivityIndicator size="large" />
-        <Text style={styles.txtSavingTask}>Saving new task...</Text>
+        <Text style={styles.txtSavingExpense}>Saving new expense...</Text>
       </View>
     );
   }

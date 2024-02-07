@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   containerSavingExpense: {
-    flex: 1,
+    marginVertical: 50,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -57,7 +57,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
     fontWeight: 'bold'
-  }
+  },
+  txtSavingExpense: {
+    fontSize: 16,
+    marginTop: 8
+  },
 });
 
 export default styles;

@@ -6,7 +6,7 @@ import AddExpenseModal from "../../components/AddExpenseModal";
 import { useExpenses } from '../../context/expensesContext';
 
 export default function Home() {
-  const { expenses, addExpenseToTheList, isDataLoaded } = useExpenses();
+  const { expenses, isDataLoaded } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
 
   const handlePressAddExpense = () => {

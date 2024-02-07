@@ -4,8 +4,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as db from '../../database/index';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
+import { useExpenses } from '../../context/expensesContext';
 
 export default function Form({ closeModal, modalVisible }) {
+  const { addExpenseToTheList } = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -24,9 +26,7 @@ export default function Form({ closeModal, modalVisible }) {
 
     await db.addExpense(amount, description, selectedDate)
       .then((result) => {
-        // const updatedExpenses = [...expensesList];
-        // updatedExpenses.push(result);
-        // updateExpensesList(updatedExpenses);
+        addExpenseToTheList(result);
 
         setAmount('');
         setDescription('');

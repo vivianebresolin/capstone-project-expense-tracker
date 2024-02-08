@@ -31,6 +31,7 @@ export default function Form({ closeModal, modalVisible }) {
         setAmount('');
         setDescription('');
         setSelectedDate(new Date());
+        setPreviousDate(new Date());
 
         setIsSavingExpense(false)
 

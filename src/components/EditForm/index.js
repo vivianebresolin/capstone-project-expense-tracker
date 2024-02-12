@@ -30,35 +30,34 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
 
 
   const handleEditingExpense = async () => {
-    if (!amount || !description || !selectedDate) {
-      Alert.alert('Edit expense');
-      return;
-    }
-  
+ 
     setIsSavingExpense(true);
-  
-    try {
-      const editedData = {
-        amount: amount,
-        description: description,
-        date: selectedDate,
-      };
-  
-      await db.updateExpense(editedData);
-      
-      // Update local state and reset form fields
-      setAmount('');
-      setDescription('');
-      setSelectedDate(new Date());
-      setPreviousDate(new Date());
-  
-      setIsSavingExpense(false);
-  
-      Alert.alert('Edit expense', 'Expense edited successfully!');
-    } catch (error) {
-      setIsSavingExpense(false);
-      Alert.alert('Error', `Error trying to edit the expense: ${error}`)
-    }
+
+    await db.addExpense(amount, description, selectedDate)
+      .then((result) => {
+        addExpenseToTheList(result);
+
+        setAmount('');
+        setDescription('');
+        setSelectedDate(new Date());
+        setPreviousDate(new Date());
+
+        setIsSavingExpense(false)
+
+        Alert.alert('Add expense', 'Expense added successfully!', [
+          {
+            text: 'Home',
+            onPress: () => closeModal1(!modalVisible1),
+          },
+          {
+            text: 'Add other expense',
+          }
+        ]);
+      })
+      .catch(error => {
+        setIsSavingExpense(false);
+        Alert.alert('Error', `Error trying to add new expense: ${error}`)
+      })
   };
   
   // Function to handle updating one or all fields of the expense
@@ -119,7 +118,7 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
       <TextInput
         style={styles.input}
         keyboardType='numeric'
-        placeholder="Amount"
+        placeholder="New Amount"
         value={amount}
         onChangeText={(text) => setAmount(text)}
       />
@@ -127,7 +126,7 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
       <Text style={styles.label}>New Description*:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter description"
+        placeholder="Enter new description"
         value={description}
         onChangeText={(text) => setDescription(text)}
       />

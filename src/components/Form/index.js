@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as db from '../../database/index';
@@ -6,8 +6,8 @@ import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
-export default function Form({ closeModal, modalVisible, expenseToEdit }) {
-  const { addExpenseToTheList, editExpense, setExpenses } = useExpenses();
+export default function Form({ closeModal, modalVisible }) {
+  const { addExpenseToTheList} = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());

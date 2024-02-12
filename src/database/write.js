@@ -1,4 +1,4 @@
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { formatDateToDB, parseStringToFloat } from '../utils/utils';
 import { db } from './config';
 import { getUniqueId } from '../utils/deviceInfo';
@@ -22,6 +22,28 @@ export async function addExpense(amount, description, date) {
   }
 }
 
-export async function updateExpense(updateExpense) { }
+export async function updateExpense(editedExpense) {
+  const { id, ...updatedData } = editedExpense;
 
-export async function deleteExpense(id) { }
+  try {
+    const deviceId = await getUniqueId();
+    const expenseRef = doc(db, 'users', deviceId, 'expenses', id);
+    await updateDoc(expenseRef, updatedData);
+    return editedExpense;
+  } catch (error) {
+    console.error('Error updating expense: ', error);
+    return null;
+  }
+}
+
+export async function deleteExpense(id) {
+  try {
+    const deviceId = await getUniqueId();
+    const expenseRef = doc(db, 'users', deviceId, 'expenses', id);
+    await deleteDoc(expenseRef);
+    return id;
+  } catch (error) {
+    console.error('Error deleting expense: ', error);
+    return null;
+  }
+}

@@ -14,6 +14,11 @@ export const ExpensesProvider = ({ children }) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
   };
 
+  const editExpense = (expenseId) => {
+    const expenseToEdit = expenses.find((expense) => expense.id === expenseId);
+    setEditingExpense(expenseToEdit);
+  };
+
   useEffect(() => {
     const getAllExpenses = async () => {
       try {

@@ -6,7 +6,7 @@ import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
-export default function Form({ closeModal, modalVisible, expenseToEdit }) {
+export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) {
   const { addExpenseToTheList, editExpense, setExpenses } = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -14,43 +14,70 @@ export default function Form({ closeModal, modalVisible, expenseToEdit }) {
   const [previousDate, setPreviousDate] = useState(selectedDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
+  const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
 
-  const handleAddExpense = async () => {
+
+  useEffect(() => {
+    if (expenseToEdit) {
+      setAmount(String(expenseToEdit.amount));
+      setDescription(expenseToEdit.description);
+      setSelectedDate(new Date(expenseToEdit.date));
+      setPreviousDate(new Date(expenseToEdit.date));
+    }
+  }, [expenseToEdit]);
+
+
+
+  const handleEditingExpense = async () => {
     if (!amount || !description || !selectedDate) {
-      Alert.alert('Add expense', 'All fields are required.');
+      Alert.alert('Edit expense');
       return;
     }
-
+  
     setIsSavingExpense(true);
-
-    await db.addExpense(amount, description, selectedDate)
-      .then((result) => {
-        addExpenseToTheList(result);
-
-        setAmount('');
-        setDescription('');
-        setSelectedDate(new Date());
-        setPreviousDate(new Date());
-
-        setIsSavingExpense(false)
-
-        Alert.alert('Add expense', 'Expense added successfully!', [
-          {
-            text: 'Home',
-            onPress: () => closeModal(!modalVisible),
-          },
-          {
-            text: 'Add other expense',
-          }
-        ]);
-      })
-      .catch(error => {
-        setIsSavingExpense(false);
-        Alert.alert('Error', `Error trying to add new expense: ${error}`)
-      })
+  
+    try {
+      const editedData = {
+        amount: amount,
+        description: description,
+        date: selectedDate,
+      };
+  
+      await db.updateExpense(editedData);
+      
+      // Update local state and reset form fields
+      setAmount('');
+      setDescription('');
+      setSelectedDate(new Date());
+      setPreviousDate(new Date());
+  
+      setIsSavingExpense(false);
+  
+      Alert.alert('Edit expense', 'Expense edited successfully!');
+    } catch (error) {
+      setIsSavingExpense(false);
+      Alert.alert('Error', `Error trying to edit the expense: ${error}`)
+    }
   };
-
+  
+  // Function to handle updating one or all fields of the expense
+  const updateExpenseField = (field, value) => {
+    switch (field) {
+      case 'amount':
+        setAmount(value);
+        break;
+      case 'description':
+        setDescription(value);
+        break;
+      case 'date':
+        setSelectedDate(value);
+        break;
+      default:
+        break;
+    }
+  };
+  
   const toggleDatePicker = () => {
     setShowDatePicker(!showDatePicker)
   };
@@ -77,27 +104,27 @@ export default function Form({ closeModal, modalVisible, expenseToEdit }) {
     }
   };
 
-  if (isSavingExpense) {
+  if (isEditingExpense) {
     return (
       <View style={styles.containerSavingExpense}>
         <ActivityIndicator size="large" />
-        <Text style={styles.txtSavingExpense}>Saving new expense...</Text>
+        <Text style={styles.txtSavingExpense}>Updating the expense...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.formContainer}>
-      <Text style={styles.label}>Amount*:</Text>
+      <Text style={styles.label}>New Amount:</Text>
       <TextInput
         style={styles.input}
         keyboardType='numeric'
-        placeholder="Enter amount"
+        placeholder="Amount"
         value={amount}
         onChangeText={(text) => setAmount(text)}
       />
 
-      <Text style={styles.label}>Description*:</Text>
+      <Text style={styles.label}>New Description*:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter description"
@@ -106,7 +133,7 @@ export default function Form({ closeModal, modalVisible, expenseToEdit }) {
       />
 
       <View>
-        <Text style={styles.label}>Date*:</Text>
+        <Text style={styles.label}>New Date:</Text>
         {!showDatePicker && (
           <TouchableOpacity onPress={toggleDatePicker}>
             <View style={styles.input}>
@@ -136,8 +163,8 @@ export default function Form({ closeModal, modalVisible, expenseToEdit }) {
           </View>
         )}
       </View>
-      <TouchableOpacity onPress={handleAddExpense} style={styles.addExpenseButton}>
-        <Text style={styles.textButtonAddExpense}>Add Expense</Text>
+      <TouchableOpacity onPress={handleEditingExpense} style={styles.addExpenseButton}>
+        <Text style={styles.textButtonAddExpense}>Edit Expense</Text>
       </TouchableOpacity>
       
     </View>

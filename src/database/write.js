@@ -25,16 +25,10 @@ export async function addExpense(amount, description, date) {
 export async function updateExpense(expense) {
   try {
     const deviceId = await getUniqueId();
-    console.log('updateExpense0', deviceId, expense.id)
     const expenseRef = doc(db, 'users', deviceId, 'expenses', expense.id);
-    console.log('updateExpense0.1')
 
-    // Fetch the existing expense data
     const expenseDoc = await getDoc(expenseRef);
-    console.log('updateExpense1')
     if (!expenseDoc.exists()) {
-      console.log('updateExpense2')
-      // Handle case where the expense does not exist
       return null;
     }
 
@@ -44,11 +38,8 @@ export async function updateExpense(expense) {
       description: expense.description,
       date: formatDateToDB(expense.date),
     };
-    console.log('updateExpense3, updatedExpense')
 
-    // Update the document with the new expense data
     await updateDoc(expenseRef, updatedExpense);
-    console.log('updateExpense4')
 
     return {
       ...updatedExpense,

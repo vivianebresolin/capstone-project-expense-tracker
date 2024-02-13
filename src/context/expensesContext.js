@@ -23,7 +23,7 @@ export const ExpensesProvider = ({ children }) => {
       await db.updateExpense(editedExpense);
       const updatedExpenses = expenses.map(expense => {
         if (editedExpense.id === expense.id) {
-          expense.amount = editedExpense.amount;
+          expense.amount = editedExpense.amount || expense.amount == expense.amount;
           expense.description = editedExpense.description;
           expense.date = formatDateToDB(editedExpense.date);
         }

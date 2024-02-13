@@ -6,7 +6,7 @@ import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
-export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) {
+export default function EditForm({ closeEditModal, isEditModalVisible, expenseToEdit }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,37 +18,52 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
 
   const handleEditingExpense = async () => {
     setIsEditedExpense(true);
-
+  
     try {
       const editedExpense = {
-        amount,
-        description,
-        date: selectedDate,
         id: expenseToEdit.id,
       };
-
+  
+      if (amount !== '') {
+        editedExpense.amount = amount;
+      } else {
+        editedExpense.amount = expenseToEdit.amount;
+      }
+  
+      if (description !== '') {
+        editedExpense.description = description;
+      } else {
+        editedExpense.description = expenseToEdit.description;
+      }
+  
+      if (selectedDate !== expenseToEdit.date) {
+        editedExpense.date = selectedDate;
+      } else {
+        editedExpense.date = expenseToEdit.date;
+      }
+  
       await db.updateExpense(editedExpense);
-
       editExpenseInList(editedExpense);
-
-
-      setAmount(amount);
-      setDescription(description);
-      setSelectedDate(new Date());
-      setPreviousDate(new Date());
-
-      // Update state to indicate editing is complete
+  
       setIsEditedExpense(false);
-
-      // Show success message
-      Alert.alert('Update expense', 'Expense updated successfully!');
+  
+      Alert.alert(
+        'Update expense',
+        'Expense updated successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => closeEditModal(!isEditModalVisible),
+          }
+        ]
+      );
     } catch (error) {
-      // Handle errors
       setIsEditedExpense(false);
       console.error('Error editing expense:', error);
       Alert.alert('Error', `Error trying to edit expense: ${error}`);
     }
   };
+  
 
 
   const toggleDatePicker = () => {
@@ -92,50 +107,51 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
       <TextInput
         style={styles.input}
         keyboardType='numeric'
-        placeholder="New Amount"
+        placeholder= {expenseToEdit.amount}
         value={amount}
         onChangeText={(text) => setAmount(text)}
       />
 
-      <Text style={styles.label}>New Description*:</Text>
+      <Text style={styles.label}>New Description:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter new description"
+        placeholder= {expenseToEdit.description}
         value={description}
         onChangeText={(text) => setDescription(text)}
       />
 
-      <View>
-        <Text style={styles.label}>New Date:</Text>
-        {!showDatePicker && (
-          <TouchableOpacity onPress={toggleDatePicker}>
-            <View style={styles.input}>
-              <Text style={styles.dateText}>{formatDateString(selectedDate)}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display="spinner"
-            onChange={handleDateChange}
-            style={styles.datePicker}
-          />
-        )}
-
-        {showDatePicker && !isAndroid && (
-          <View style={styles.iosDatePickerButtonsContainer}>
-            <TouchableOpacity onPress={iosCancel} style={styles.iosButton}>
-              <Text style={styles.textCancelButton}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={iosConfirm} style={styles.iosButton}>
-              <Text style={styles.textConfirmButton}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+<View>
+  <Text style={styles.label}>New Date:</Text>
+  {!showDatePicker && (
+    <TouchableOpacity onPress={toggleDatePicker}>
+      <View style={styles.input}>
+        <Text style={styles.dateText} >{expenseToEdit.date}</Text>
       </View>
+    </TouchableOpacity>
+  )}
+
+  {showDatePicker && (
+    <DateTimePicker
+      value={selectedDate}
+      mode="date"
+      display="spinner"
+      onChange={handleDateChange}
+      style={styles.datePicker}
+    />
+  )}
+
+  {showDatePicker && !isAndroid && (
+    <View style={styles.iosDatePickerButtonsContainer}>
+      <TouchableOpacity onPress={iosCancel} style={styles.iosButton}>
+        <Text style={styles.textCancelButton}>Cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={iosConfirm} style={styles.iosButton}>
+        <Text style={styles.textConfirmButton}>Confirm</Text>
+      </TouchableOpacity>
+    </View>
+  )}
+</View>
+
       <TouchableOpacity onPress={handleEditingExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Edit Expense</Text>
       </TouchableOpacity>

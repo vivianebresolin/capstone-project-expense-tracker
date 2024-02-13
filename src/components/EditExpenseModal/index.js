@@ -5,21 +5,21 @@ import { useState, useEffect } from 'react';
 import EditForm from "../EditForm";
 
 
-export default function EditExpenseModal({ isModalVisible1, closeModal1, expenseToEdit }) {
+export default function EditExpenseModal({ isEditModalVisible, closeEditModal, expenseToEdit }) {
 
   return (
     <View styles={{ flex: 1 }}>
       <Modal
         animationType="fade"
         transparent={true}
-        visible={isModalVisible1}
+        visible={isEditModalVisible}
         onRequestClose={() => {
-          closeModal1(!isModalVisible1);
+          closeEditModal(!isEditModalVisible);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Pressable
-              onPress={() => closeModal1(!isModalVisible1)}
+              onPress={() => closeEditModal(!isEditModalVisible)}
               style={{ alignSelf: 'flex-end' }}
             >
               <AntDesign name="closecircleo" size={24} color="black" />
@@ -28,7 +28,7 @@ export default function EditExpenseModal({ isModalVisible1, closeModal1, expense
               <Text style={styles.h1}>Let's edit your spending!</Text>
               <Text style={styles.h2}>Please change the details of your expense below:</Text>
             </View>
-            <EditForm closeModal1={closeModal1} isModalVisible1={isModalVisible1} expenseToEdit={expenseToEdit} />
+            <EditForm closeEditModal={closeEditModal} isEditModalVisible={isEditModalVisible} expenseToEdit={expenseToEdit} />
           </View>
         </View>
       </Modal>

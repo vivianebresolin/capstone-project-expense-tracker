@@ -81,7 +81,7 @@ export default function Home() {
       )}
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
-      <EditExpenseModal isModalVisible1={editModalVisible} closeModal1={setEditModalVisible} expenseToEdit={editedExpense} />
+      <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} />
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

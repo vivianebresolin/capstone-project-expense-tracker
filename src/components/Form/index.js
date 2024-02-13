@@ -7,7 +7,7 @@ import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
 export default function Form({ closeModal, modalVisible }) {
-  const { addExpenseToTheList } = useExpenses();
+  const { addExpenseToTheList} = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -139,6 +139,7 @@ export default function Form({ closeModal, modalVisible }) {
       <TouchableOpacity onPress={handleAddExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Add Expense</Text>
       </TouchableOpacity>
+      
     </View>
   );
 };

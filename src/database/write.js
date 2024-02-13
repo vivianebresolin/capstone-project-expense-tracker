@@ -22,17 +22,21 @@ export async function addExpense(amount, description, date) {
   }
 }
 
-export async function updateExpense(editedExpense) {
-  const { id, ...updatedData } = editedExpense;
+export async function updateExpense(newAmount, newDescription, newDate, expenseId) {
+  const updatedExpense = {
+    amount: parseStringToFloat(newAmount),
+    description: newDescription,
+    date: formatDateToDB(newDate),
+  };
 
   try {
-    const deviceId = await getUniqueId();
-    const expenseRef = doc(db, 'users', deviceId, 'expenses', id);
-    await updateDoc(expenseRef, updatedData);
-    return editedExpense;
+    const deviceId = await getUniqueId(); 
+    const expenseRef = doc(db, 'users', deviceId, 'expenses', expenseId); 
+    await updateDoc(expenseRef, updatedExpense); 
+    return updatedExpense; 
   } catch (error) {
     console.error('Error updating expense: ', error);
-    return null;
+    return null; 
   }
 }
 

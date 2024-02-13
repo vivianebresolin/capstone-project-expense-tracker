@@ -14,16 +14,40 @@ export const ExpensesProvider = ({ children }) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
   };
 
-  const editExpense = (expenseId) => {
-    const expenseToEdit = expenses.find((expense) => expense.id === expenseId);
-    setEditingExpense(expenseToEdit);
+  const editExpenseInList = async (editedExpense) => {
+    try {
+      if (!editedExpense || !editedExpense.id) {
+        throw new Error('Edited expense or its ID is undefined');
+      }
+      await db.updateExpense(editedExpense);
+      setExpenses((prevExpenses) =>
+        prevExpenses.map((expense) =>
+          expense.id === editedExpense.id ? editedExpense : expense
+        )
+      );
+    } catch (error) {
+      console.error('Error editing expense:', error);
+      Alert.alert('Error', 'Failed to edit expense.');
+    }
+  };
+  
+  
+  
+  const deleteExpenseFromList = async (deletedExpenseId) => {
+    try {
+      await db.deleteExpense(deletedExpenseId);
+      setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== deletedExpenseId));
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      Alert.alert('Error', 'Failed to delete expense.');
+    }
   };
 
   useEffect(() => {
     const getAllExpenses = async () => {
       try {
         const expensesFromDB = await db.getAllExpenses();
-        setExpenses(expensesFromDB)
+        setExpenses(expensesFromDB);
         setDataLoaded(true);
         SplashScreen.hideAsync();
       } catch (error) {
@@ -37,7 +61,9 @@ export const ExpensesProvider = ({ children }) => {
   }, []);
 
   return (
-    <ExpensesContext.Provider value={{ expenses, addExpenseToTheList, isDataLoaded }}>
+    <ExpensesContext.Provider
+      value={{ expenses, addExpenseToTheList, editExpenseInList, deleteExpenseFromList, isDataLoaded }}
+    >
       {children}
     </ExpensesContext.Provider>
   );

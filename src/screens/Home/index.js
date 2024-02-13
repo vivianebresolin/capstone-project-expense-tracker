@@ -6,25 +6,53 @@ import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
 import { useExpenses } from '../../context/expensesContext';
 
-
 export default function Home() {
   const { expenses, isDataLoaded } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
-
+ 
   //Edit expenses
   const [modalVisible1, setModalVisible1] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
-
-
-  // Function to handle editing an expense
-  const handleEditExpense = (expense) => {
-    setEditedExpense(expense);
-    setModalVisible1(true);
-  };
+  //Delete 
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
+  const { deleteExpenseFromList } = useExpenses();
 
   const handlePressAddExpense = () => {
     setModalVisible(true);
   }
+
+  const handleEditExpense = (expense) => {
+    setEditedExpense(expense);
+    setModalVisible1(true);
+
+  };
+
+  const handleDeleteExpense = async (expense) => {
+    setExpenseToDelete(expense);
+    Alert.alert(
+      'Delete Expense',
+      'Are you sure you want to delete this expense?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => setExpenseToDelete(null),
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              await deleteExpenseFromList(expense.id);
+              setExpenseToDelete(null);
+            } catch (error) {
+              console.error('Error deleting expense: ', error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   if (!isDataLoaded) {
     return (
@@ -44,13 +72,15 @@ export default function Home() {
               <Text>Date: {expense.date}</Text>
               <Text>Description: {expense.description}</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleDeleteExpense(expense)}>
+              <Text>Delete</Text>
+            </TouchableOpacity>
           </View>
         )
       )}
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
-      <EditExpenseModal isModalVisible1={modalVisible1} closeModal1={setModalVisible1} />
-
+      <EditExpenseModal isModalVisible1={modalVisible1} closeModal1={setModalVisible1} expenseToEdit={editedExpense} />
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

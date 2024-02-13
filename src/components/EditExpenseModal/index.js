@@ -4,6 +4,7 @@ import styles from "./styles";
 import { useState, useEffect } from 'react';
 import EditForm from "../EditForm";
 
+
 export default function EditExpenseModal({ isModalVisible1, closeModal1}) {
 
   return (
@@ -13,7 +14,7 @@ export default function EditExpenseModal({ isModalVisible1, closeModal1}) {
         transparent={true}
         visible={isModalVisible1}
         onRequestClose={() => {
-          closeModal1(!isModalVisible1);
+          closeModal(!isModalVisible1);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>

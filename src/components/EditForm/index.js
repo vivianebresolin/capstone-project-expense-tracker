@@ -7,75 +7,50 @@ import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
 export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) {
-  const { addExpenseToTheList, editExpense, setExpenses } = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState(selectedDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isSavingExpense, setIsSavingExpense] = useState(false);
   const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
-
-
-  useEffect(() => {
-    if (expenseToEdit) {
-      setAmount(String(expenseToEdit.amount));
-      setDescription(expenseToEdit.description);
-      setSelectedDate(new Date(expenseToEdit.date));
-      setPreviousDate(new Date(expenseToEdit.date));
-    }
-  }, [expenseToEdit]);
-
-
+  const { editExpenseInList } = useExpenses();
 
   const handleEditingExpense = async () => {
- 
-    setIsSavingExpense(true);
+    setIsEditedExpense(true);
+    
+    try {
+      const editedExpense = {
+        amount,
+        description,
+        date: selectedDate,
+        id: expenseToEdit.id,
+      };
 
-    await db.addExpense(amount, description, selectedDate)
-      .then((result) => {
-        addExpenseToTheList(result);
+      await db.updateExpense(editedExpense); 
+      
+     
+      editExpenseInList(editedExpense);
 
-        setAmount('');
-        setDescription('');
-        setSelectedDate(new Date());
-        setPreviousDate(new Date());
+      
+      setAmount(amount);
+      setDescription(description);
+      setSelectedDate(new Date());
+      setPreviousDate(new Date());
 
-        setIsSavingExpense(false)
+      // Update state to indicate editing is complete
+      setIsEditedExpense(false);
 
-        Alert.alert('Add expense', 'Expense added successfully!', [
-          {
-            text: 'Home',
-            onPress: () => closeModal1(!modalVisible1),
-          },
-          {
-            text: 'Add other expense',
-          }
-        ]);
-      })
-      .catch(error => {
-        setIsSavingExpense(false);
-        Alert.alert('Error', `Error trying to add new expense: ${error}`)
-      })
-  };
-  
-  // Function to handle updating one or all fields of the expense
-  const updateExpenseField = (field, value) => {
-    switch (field) {
-      case 'amount':
-        setAmount(value);
-        break;
-      case 'description':
-        setDescription(value);
-        break;
-      case 'date':
-        setSelectedDate(value);
-        break;
-      default:
-        break;
+      // Show success message
+      Alert.alert('Update expense', 'Expense updated successfully!');
+    } catch (error) {
+      // Handle errors
+      setIsEditedExpense(false);
+      console.error('Error editing expense:', error);
+      Alert.alert('Error', `Error trying to edit expense: ${error}`);
     }
   };
+  
   
   const toggleDatePicker = () => {
     setShowDatePicker(!showDatePicker)

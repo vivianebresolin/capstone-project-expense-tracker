@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import * as db from '../database/index';
+import { formatDateToDB } from '../utils/utils';
 
 const ExpensesContext = createContext();
 SplashScreen.preventAutoHideAsync();
@@ -20,19 +21,22 @@ export const ExpensesProvider = ({ children }) => {
         throw new Error('Edited expense or its ID is undefined');
       }
       await db.updateExpense(editedExpense);
-      setExpenses((prevExpenses) =>
-        prevExpenses.map((expense) =>
-          expense.id === editedExpense.id ? editedExpense : expense
-        )
-      );
+      const updatedExpenses = expenses.map(expense => {
+        if (editedExpense.id === expense.id) {
+          expense.amount = editedExpense.amount;
+          expense.description = editedExpense.description;
+          expense.date = formatDateToDB(editedExpense.date);
+        }
+        return expense;
+      })
+      setExpenses(updatedExpenses)
     } catch (error) {
-      console.error('Error editing expense:', error);
       Alert.alert('Error', 'Failed to edit expense.');
     }
   };
-  
-  
-  
+
+
+
   const deleteExpenseFromList = async (deletedExpenseId) => {
     try {
       await db.deleteExpense(deletedExpenseId);

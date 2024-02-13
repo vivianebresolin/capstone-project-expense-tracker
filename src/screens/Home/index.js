@@ -9,9 +9,9 @@ import { useExpenses } from '../../context/expensesContext';
 export default function Home() {
   const { expenses, isDataLoaded } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
- 
+
   //Edit expenses
-  const [modalVisible1, setModalVisible1] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
   //Delete 
   const [expenseToDelete, setExpenseToDelete] = useState(null);
@@ -22,12 +22,13 @@ export default function Home() {
   }
 
   const handleEditExpense = (expense) => {
+    console.log('handleEditExpense', expense)
     setEditedExpense(expense);
-    setModalVisible1(true);
-
+    setEditModalVisible(true);
   };
 
   const handleDeleteExpense = async (expense) => {
+    console.log('handleDelete', expense)
     setExpenseToDelete(expense);
     Alert.alert(
       'Delete Expense',
@@ -80,7 +81,7 @@ export default function Home() {
       )}
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
-      <EditExpenseModal isModalVisible1={modalVisible1} closeModal1={setModalVisible1} expenseToEdit={editedExpense} />
+      <EditExpenseModal isModalVisible1={editModalVisible} closeModal1={setEditModalVisible} expenseToEdit={editedExpense} />
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

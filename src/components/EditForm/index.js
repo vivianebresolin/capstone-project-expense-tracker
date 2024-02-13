@@ -18,7 +18,7 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
 
   const handleEditingExpense = async () => {
     setIsEditedExpense(true);
-    
+
     try {
       const editedExpense = {
         amount,
@@ -27,12 +27,11 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
         id: expenseToEdit.id,
       };
 
-      await db.updateExpense(editedExpense); 
-      
-     
+      await db.updateExpense(editedExpense);
+
       editExpenseInList(editedExpense);
 
-      
+
       setAmount(amount);
       setDescription(description);
       setSelectedDate(new Date());
@@ -50,8 +49,8 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
       Alert.alert('Error', `Error trying to edit expense: ${error}`);
     }
   };
-  
-  
+
+
   const toggleDatePicker = () => {
     setShowDatePicker(!showDatePicker)
   };
@@ -140,7 +139,7 @@ export default function EditForm({ closeModal1, modalVisible1, expenseToEdit }) 
       <TouchableOpacity onPress={handleEditingExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Edit Expense</Text>
       </TouchableOpacity>
-      
+
     </View>
   );
 };

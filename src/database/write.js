@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { formatDateToDB, parseStringToFloat } from '../utils/utils';
 import { db } from './config';
 import { getUniqueId } from '../utils/deviceInfo';
@@ -22,21 +22,41 @@ export async function addExpense(amount, description, date) {
   }
 }
 
-export async function updateExpense(newAmount, newDescription, newDate, expenseId) {
-  const updatedExpense = {
-    amount: parseStringToFloat(newAmount),
-    description: newDescription,
-    date: formatDateToDB(newDate),
-  };
-
+export async function updateExpense(expense) {
   try {
-    const deviceId = await getUniqueId(); 
-    const expenseRef = doc(db, 'users', deviceId, 'expenses', expenseId); 
-    await updateDoc(expenseRef, updatedExpense); 
-    return updatedExpense; 
-  } catch (error) {
-    console.error('Error updating expense: ', error);
-    return null; 
+    const deviceId = await getUniqueId();
+    console.log('updateExpense0', deviceId, expense.id)
+    const expenseRef = doc(db, 'users', deviceId, 'expenses', expense.id);
+    console.log('updateExpense0.1')
+
+    // Fetch the existing expense data
+    const expenseDoc = await getDoc(expenseRef);
+    console.log('updateExpense1')
+    if (!expenseDoc.exists()) {
+      console.log('updateExpense2')
+      // Handle case where the expense does not exist
+      return null;
+    }
+
+    // Update the expense data
+    const updatedExpense = {
+      amount: parseStringToFloat(expense.amount),
+      description: expense.description,
+      date: formatDateToDB(expense.date),
+    };
+    console.log('updateExpense3, updatedExpense')
+
+    // Update the document with the new expense data
+    await updateDoc(expenseRef, updatedExpense);
+    console.log('updateExpense4')
+
+    return {
+      ...updatedExpense,
+      id: expense.id,
+    };
+  } catch (e) {
+    console.error('Error updating expense:', e);
+    return null;
   }
 }
 

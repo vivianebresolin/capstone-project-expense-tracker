@@ -16,6 +16,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginTop: 8
+  },
+  listHeader: {
+    paddingTop: 8,
+    paddingBottom: 4,
+    paddingLeft: 2,
+  },
+  headerText: {
+    fontWeight: '500'
   }
 });
 

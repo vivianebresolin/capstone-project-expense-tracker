@@ -57,3 +57,42 @@ export function formatNumberIntoCurrency(number) {
 
   return formattedValue;
 }
+
+// Helper functions to check date ranges
+export const isToday = (date) => {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+};
+
+export const isWithinLastSevenDays = (date) => {
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // Considering today as well
+  return date >= sevenDaysAgo && date <= today;
+};
+
+export const isThisMonth = (date) => {
+  const today = new Date();
+  return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+};
+
+export const isThisYear = (date) => {
+  const today = new Date();
+  return date.getFullYear() === today.getFullYear();
+};
+
+// Helper function to get text for time range header
+export const getTimeRangeHeaderText = (timeRange) => {
+  switch (timeRange) {
+    case 'Today':
+      return 'Today';
+    case 'Last Seven Days':
+      return 'Last Seven Days';
+    case 'This Month':
+      return 'This Month';
+    case 'This Year':
+      return 'This Year';
+    default:
+      return 'All Expenses';
+  }
+};

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import * as db from '../database/index';
-import { formatDateToDB } from '../utils/utils';
+import { formatDateToDB, getTimeRangeHeaderText, isToday, isWithinLastSevenDays, isThisMonth, isThisYear } from '../utils/utils';
 
 const ExpensesContext = createContext();
 SplashScreen.preventAutoHideAsync();
@@ -10,6 +10,10 @@ SplashScreen.preventAutoHideAsync();
 export const ExpensesProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [isDataLoaded, setDataLoaded] = useState(false);
+  const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [selectedButton, setSelectedButton] = useState('All Expenses');
+  const [headerText, setHeaderText] = useState('All Expenses');
 
   const addExpenseToTheList = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -35,8 +39,6 @@ export const ExpensesProvider = ({ children }) => {
     }
   };
 
-
-
   const deleteExpenseFromList = async (deletedExpenseId) => {
     try {
       await db.deleteExpense(deletedExpenseId);
@@ -46,6 +48,41 @@ export const ExpensesProvider = ({ children }) => {
       Alert.alert('Error', 'Failed to delete expense.');
     }
   };
+
+  const displayExpensesList = (timeRange) => {
+    setSelectedButton(timeRange);
+
+    let updatedExpensesList = [];
+
+    switch (timeRange) {
+      case 'Today':
+        updatedExpensesList = expenses.filter(expense => isToday(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'Last Seven Days':
+        updatedExpensesList = expenses.filter(expense => isWithinLastSevenDays(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'This Month':
+        updatedExpensesList = expenses.filter(expense => isThisMonth(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'This Year':
+        updatedExpensesList = expenses.filter(expense => isThisYear(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      default:
+        updatedExpensesList = expenses;
+    }
+
+    setFilteredExpenses(updatedExpensesList);
+
+    const listHeader = getTimeRangeHeaderText(timeRange);
+    setHeaderText(listHeader);
+
+    calculateTotalSpent(updatedExpensesList);
+  }
+
+  const calculateTotalSpent = (filteredExpenses) => {
+    const total = filteredExpenses.reduce((total, expense) => total + Number(expense.amount), 0);
+    setTotalSpent(total);
+  }
 
   useEffect(() => {
     const getAllExpenses = async () => {
@@ -64,9 +101,29 @@ export const ExpensesProvider = ({ children }) => {
     getAllExpenses();
   }, []);
 
+  useEffect(() => {
+    setFilteredExpenses(expenses);
+    setSelectedButton('All Expenses');
+    calculateTotalSpent(expenses);
+  }, [expenses]);
+
   return (
     <ExpensesContext.Provider
-      value={{ expenses, addExpenseToTheList, editExpenseInList, deleteExpenseFromList, isDataLoaded }}
+      value={
+        {
+          expenses,
+          addExpenseToTheList,
+          editExpenseInList,
+          deleteExpenseFromList,
+          isDataLoaded,
+          filteredExpenses,
+          setFilteredExpenses,
+          displayExpensesList,
+          totalSpent,
+          selectedButton,
+          headerText
+        }
+      }
     >
       {children}
     </ExpensesContext.Provider>

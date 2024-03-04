@@ -4,11 +4,14 @@ import styles from "./styles";
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
+import FilterButton from "../../components/FilterButton";
 import { useExpenses } from '../../context/expensesContext';
 
 export default function Home() {
   const { expenses, isDataLoaded } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedButton, setSelectedButton] = useState('All Expenses');
+  const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
 
   //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
@@ -65,6 +68,16 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.filtersContainer}>
+        {filterButtonsTitles.map((title, index) =>
+          <FilterButton
+            key={index}
+            title={title}
+            onPress={() => displayExpensesList(title)}
+            isSelected={selectedButton === title}
+          />
+        )}
+      </View>
       {expenses.length > 0 && (
         expenses.map((expense, index) =>
           <View key={index} style={{ borderWidth: 1, borderColor: 'black', padding: 5, margin: 3, backgroundColor: 'white' }}>

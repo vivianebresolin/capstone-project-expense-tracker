@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import styles from "./styles";
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
 import FilterButton from "../../components/FilterButton";
+import TotalSpentCard from '../../components/TotalSpentCard';
 import { useExpenses } from '../../context/expensesContext';
+import styles from "./styles";
 
 export default function Home() {
-  const { expenses, isDataLoaded } = useExpenses();
+  const { expenses, isDataLoaded, deleteExpenseFromList } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
+  const [totalSpent, setTotalSpent] = useState(0);
   const [selectedButton, setSelectedButton] = useState('All Expenses');
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
 
@@ -18,7 +20,6 @@ export default function Home() {
   const [editedExpense, setEditedExpense] = useState(null);
   //Delete 
   const [expenseToDelete, setExpenseToDelete] = useState(null);
-  const { deleteExpenseFromList } = useExpenses();
 
   const handlePressAddExpense = () => {
     setModalVisible(true);
@@ -68,6 +69,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
+
       <View style={styles.filtersContainer}>
         {filterButtonsTitles.map((title, index) =>
           <FilterButton
@@ -78,6 +80,9 @@ export default function Home() {
           />
         )}
       </View>
+
+      <TotalSpentCard amount={totalSpent} />
+
       {expenses.length > 0 && (
         expenses.map((expense, index) =>
           <View key={index} style={{ borderWidth: 1, borderColor: 'black', padding: 5, margin: 3, backgroundColor: 'white' }}>
@@ -95,6 +100,7 @@ export default function Home() {
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
       <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} />
+
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

@@ -47,3 +47,13 @@ export function parseStringToFloat(userInput) {
 
   return parsedValue;
 }
+
+export function formatNumberIntoCurrency(number) {
+  const value = Number(number);
+  const formattedValue = value.toLocaleString('en-CA', {
+    style: 'currency',
+    currency: 'CAD'
+  });
+
+  return formattedValue;
+}

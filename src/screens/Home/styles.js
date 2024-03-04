@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: 8,
+    marginTop: 8
   }
 });
 

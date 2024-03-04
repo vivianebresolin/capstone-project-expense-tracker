@@ -6,6 +6,7 @@ import EditExpenseModal from "../../components/EditExpenseModal";
 import FilterButton from "../../components/FilterButton";
 import TotalSpentCard from '../../components/TotalSpentCard';
 import { useExpenses } from '../../context/expensesContext';
+import CategoriesDropdown from "../../components/CategoriesDropdown";
 import styles from "./styles";
 
 export default function Home() {
@@ -20,11 +21,17 @@ export default function Home() {
   } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
-
+  const [selectedCategoryButton, setSelectedCategoryButton] = useState('All Expenses');
+  const [selectedCategory, setSelectedCategory] = useState(null);
   //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
 
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSelectedCategoryButton('All Expenses'); 
+  };
   const handlePressAddExpense = () => {
     setModalVisible(true);
   }
@@ -80,6 +87,12 @@ export default function Home() {
         )}
       </View>
 
+      <CategoriesDropdown
+        categories={['Food', 'Transportation', 'Shopping', 'Others']}
+        onSelectCategory={handleCategoryChange}
+      />
+
+
       <TotalSpentCard amount={totalSpent} />
 
       <View style={styles.listHeader}>
@@ -95,6 +108,7 @@ export default function Home() {
                 <Text>Amount: {expense.amount}</Text>
                 <Text>Date: {expense.date}</Text>
                 <Text>Description: {expense.description}</Text>
+                <Text>Category: {expense.category}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleDeleteExpense(expense)}>
                 <Text>Delete</Text>

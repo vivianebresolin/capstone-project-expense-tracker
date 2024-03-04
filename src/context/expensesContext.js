@@ -14,6 +14,8 @@ export const ExpensesProvider = ({ children }) => {
   const [totalSpent, setTotalSpent] = useState(0);
   const [selectedButton, setSelectedButton] = useState('All Expenses');
   const [headerText, setHeaderText] = useState('All Expenses');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories'); // Initialize with 'All Categories'
+  const categories = ['All Categories', 'Food', 'Transportation', 'Shopping', 'Others']; // Define your categories
 
   const addExpenseToTheList = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -30,6 +32,8 @@ export const ExpensesProvider = ({ children }) => {
           expense.amount = editedExpense.amount || expense.amount == expense.amount;
           expense.description = editedExpense.description;
           expense.date = formatDateToDB(editedExpense.date);
+          expense.category = editedExpense.category;
+          
         }
         return expense;
       })
@@ -70,6 +74,7 @@ export const ExpensesProvider = ({ children }) => {
       default:
         updatedExpensesList = expenses;
     }
+    
 
     setFilteredExpenses(updatedExpensesList);
 

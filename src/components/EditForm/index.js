@@ -17,7 +17,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [category, setSelectedCategory] = useState('');
   const categories = ['Food', 'Transportation', 'Shopping', 'Others'];
 
 
@@ -27,7 +27,6 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
     try {
       const editedExpense = {
         id: expenseToEdit.id,
-        category: selectedCategory,
       };
   
       if (amount !== '') {
@@ -47,7 +46,13 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       } else {
         editedExpense.date = expenseToEdit.date;
       }
-  
+
+      if (category !== '') {
+        editedExpense.category = category;
+      } else {
+        editedExpense.category = expenseToEdit.category;
+      }
+     
       await db.updateExpense(editedExpense);
       editExpenseInList(editedExpense);
   
@@ -139,9 +144,10 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
 <View>
   <Text style={styles.label}>New Category:</Text>
   <RNPickerSelect
-    placeholder={{ label: 'Select a category', value: null }}
-    onValueChange={(value) => setSelectedCategory(value)}
+    placeholder={{ label: `Selected category: ${expenseToEdit.category}`, value: expenseToEdit.category }}
     items={categories.map(category => ({ label: category, value: category }))}
+    onValueChange={(value) => setSelectedCategory(value)}
+    value={category} // Update this line
   />
 </View>
 

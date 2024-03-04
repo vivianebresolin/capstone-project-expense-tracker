@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as db from '../../database/index';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
+import RNPickerSelect from 'react-native-picker-select';
+
 
 export default function Form({ closeModal, modalVisible }) {
   const { addExpenseToTheList} = useExpenses();
@@ -14,17 +16,19 @@ export default function Form({ closeModal, modalVisible }) {
   const [previousDate, setPreviousDate] = useState(selectedDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const isAndroid = Platform.OS === 'android';
+  const categories = ['Food', 'Transportation', 'Shopping', 'Others'];
 
   const handleAddExpense = async () => {
-    if (!amount || !description || !selectedDate) {
+    if (!amount || !description || !selectedDate || !selectedCategory) {
       Alert.alert('Add expense', 'All fields are required.');
       return;
     }
 
     setIsSavingExpense(true);
 
-    await db.addExpense(amount, description, selectedDate)
+    await db.addExpense(amount, description, selectedDate, selectedCategory)
       .then((result) => {
         addExpenseToTheList(result);
 
@@ -114,6 +118,12 @@ export default function Form({ closeModal, modalVisible }) {
             </View>
           </TouchableOpacity>
         )}
+        <Text style={styles.label}>Category:</Text>
+        <RNPickerSelect
+          placeholder={{ label: 'Select a category', value: null }}
+          onValueChange={(value) => setSelectedCategory(value)}
+          items={categories.map(category => ({ label: category, value: category }))}
+        />
 
         {showDatePicker && (
           <DateTimePicker

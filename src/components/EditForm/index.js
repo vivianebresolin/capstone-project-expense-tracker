@@ -5,6 +5,8 @@ import * as db from '../../database/index';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
+import RNPickerSelect from 'react-native-picker-select';
+
 
 export default function EditForm({ closeEditModal, isEditModalVisible, expenseToEdit }) {
   const [amount, setAmount] = useState('');
@@ -15,6 +17,9 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const categories = ['Food', 'Transportation', 'Shopping', 'Others'];
+
 
   const handleEditingExpense = async () => {
     setIsEditedExpense(true);
@@ -22,6 +27,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
     try {
       const editedExpense = {
         id: expenseToEdit.id,
+        category: selectedCategory,
       };
   
       if (amount !== '') {
@@ -129,6 +135,15 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       </View>
     </TouchableOpacity>
   )}
+
+<View>
+  <Text style={styles.label}>New Category:</Text>
+  <RNPickerSelect
+    placeholder={{ label: 'Select a category', value: null }}
+    onValueChange={(value) => setSelectedCategory(value)}
+    items={categories.map(category => ({ label: category, value: category }))}
+  />
+</View>
 
   {showDatePicker && (
     <DateTimePicker

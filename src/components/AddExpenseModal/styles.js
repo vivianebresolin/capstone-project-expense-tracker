@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     }),
   },
   textContainer: {
-    marginTop: 18,
+    marginTop: 10,
     display: 'flex',
     gap: 8
   },

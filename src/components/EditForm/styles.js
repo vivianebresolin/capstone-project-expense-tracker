@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+    color: '#327AFf'
   },
   input: {
     height: 40,
@@ -50,13 +51,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginTop: 32,
+    backgroundColor: '#327AFf',
   },
   textButtonAddExpense: {
     fontSize: 18,
     textTransform: 'uppercase',
     textAlign: 'center',
     color: '#fff',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: 'white'
   },
   txtSavingExpense: {
     fontSize: 16,

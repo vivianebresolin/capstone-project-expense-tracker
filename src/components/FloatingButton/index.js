@@ -6,7 +6,7 @@ import styles from "./styles";
 export default function FloatingButton({ onPress, iconName }) {
   return (
     <TouchableOpacity style={styles.floatingButton} onPress={onPress}>
-      <AntDesign name={iconName} size={30} color="black" />
+      <AntDesign name={iconName} size={30}  />
     </TouchableOpacity>
   );
 }

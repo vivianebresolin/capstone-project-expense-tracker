@@ -28,15 +28,19 @@ const styles = StyleSheet.create({
   textContainer: {
     marginTop: 10,
     display: 'flex',
-    gap: 8
+    gap: 8,
+    
   },
   h1: {
     textAlign: 'center',
     fontSize: 24,
+    color: 'black',
+    fontWeight:'500'
   },
   h2: {
     textAlign: 'center',
     fontSize: 18,
+    color: '#666666'
   },
 });
 

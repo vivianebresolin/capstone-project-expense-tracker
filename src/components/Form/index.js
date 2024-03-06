@@ -18,7 +18,7 @@ export default function Form({ closeModal, modalVisible }) {
   const [isSavingExpense, setIsSavingExpense] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const isAndroid = Platform.OS === 'android';
-  const categories = ['Food', 'Transportation', 'Shopping', 'Others'];
+  const categories = ['Home','Food', 'Transportation', 'Shopping', 'Others'];
 
   const handleAddExpense = async () => {
     if (!amount || !description || !selectedDate || !selectedCategory) {

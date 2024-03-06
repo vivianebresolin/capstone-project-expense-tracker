@@ -14,8 +14,8 @@ export const ExpensesProvider = ({ children }) => {
   const [totalSpent, setTotalSpent] = useState(0);
   const [selectedButton, setSelectedButton] = useState('All Expenses');
   const [headerText, setHeaderText] = useState('All Expenses');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories'); // Initialize with 'All Categories'
-  const categories = ['All Categories', 'Food', 'Transportation', 'Shopping', 'Others']; // Define your categories
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const categories = ['All Categories', 'Hone', 'Food', 'Transportation', 'Shopping', 'Others'];
 
   const addExpenseToTheList = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -53,10 +53,11 @@ export const ExpensesProvider = ({ children }) => {
     }
   };
 
-  const displayExpensesList = (timeRange) => {
+  const displayExpensesList = async (timeRange, selectedCategory) => {
     setSelectedButton(timeRange);
+    setSelectedCategory(selectedCategory);
 
-    let updatedExpensesList = [];
+    let updatedExpensesList = [...expenses];
 
     switch (timeRange) {
       case 'Today':
@@ -74,6 +75,9 @@ export const ExpensesProvider = ({ children }) => {
       default:
         updatedExpensesList = expenses;
     }
+    if (selectedCategory !== 'All Categories') {
+      updatedExpensesList = updatedExpensesList.filter(expense => expense.category === selectedCategory);
+    }
     
 
     setFilteredExpenses(updatedExpensesList);
@@ -90,7 +94,7 @@ export const ExpensesProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    const getAllExpenses = async () => {
+    const getAllExpenses = async () => { 
       try {
         const expensesFromDB = await db.getAllExpenses();
         setExpenses(expensesFromDB);

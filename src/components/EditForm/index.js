@@ -18,7 +18,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
   const [category, setSelectedCategory] = useState('');
-  const categories = ['Food', 'Transportation', 'Shopping', 'Others'];
+  const categories = ['Home','Food', 'Transportation', 'Shopping', 'Others'];
 
 
   const handleEditingExpense = async () => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
@@ -7,6 +7,7 @@ import FilterButton from "../../components/FilterButton";
 import TotalSpentCard from '../../components/TotalSpentCard';
 import { useExpenses } from '../../context/expensesContext';
 import CategoriesDropdown from "../../components/CategoriesDropdown";
+import { FontAwesome } from '@expo/vector-icons';
 import styles from "./styles";
 
 export default function Home() {
@@ -17,20 +18,26 @@ export default function Home() {
     displayExpensesList,
     totalSpent,
     selectedButton,
-    headerText
+    headerText,
+    categories
   } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
+ //Filter expenses by date and category
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
-  const [selectedCategoryButton, setSelectedCategoryButton] = useState('All Expenses');
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+ 
   //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
 
+  const categoryIcons = {Home: 'home', Food: 'cutlery', Transportation: 'car', Shopping: 'shopping-cart', Others: 'money',};
+
+  useEffect(() => {
+    displayExpensesList(selectedButton, selectedCategory);
+  }, [selectedButton, selectedCategory]);
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setSelectedCategoryButton('All Expenses'); 
   };
   const handlePressAddExpense = () => {
     setModalVisible(true);
@@ -75,7 +82,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.filtersContainer}>
         {filterButtonsTitles.map((title, index) =>
           <FilterButton
@@ -88,10 +94,9 @@ export default function Home() {
       </View>
 
       <CategoriesDropdown
-        categories={['Food', 'Transportation', 'Shopping', 'Others']}
+        categories={['All Categories', 'Home', 'Food', 'Transportation', 'Shopping', 'Others']}
         onSelectCategory={handleCategoryChange}
       />
-
 
       <TotalSpentCard amount={totalSpent} />
 
@@ -99,19 +104,27 @@ export default function Home() {
         <Text style={styles.headerText}>{headerText}</Text>
       </View>
       {filteredExpenses.length === 0 ? (
-        <Text>No expenses for this period.</Text>
+        <Text style={styles.noExpenseText}>No expenses for this period.</Text>
       ) : (
         <ScrollView>
           {filteredExpenses.map((expense, index) =>
-            <View key={index} style={{ borderWidth: 1, borderColor: 'black', padding: 5, margin: 3, backgroundColor: 'white' }}>
+            <View key={index}>
               <TouchableOpacity onPress={() => handleEditExpense(expense)} >
-                <Text>Amount: {expense.amount}</Text>
-                <Text>Date: {expense.date}</Text>
-                <Text>Description: {expense.description}</Text>
-                <Text>Category: {expense.category}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleDeleteExpense(expense)}>
-                <Text>Delete</Text>
+                <View style={styles.expensesContainer}>
+                  <View style={styles.expenseContainer}>
+                    <View style={styles.iconContainer}>
+                      <FontAwesome name={categoryIcons[expense.category] || 'home'} size={35} color="#327AFf" />
+                    </View>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.categoryAmountText}>{expense.description}: <Text style={styles.categoryInnerAmountText}> - {expense.amount} $</Text></Text>
+                      <Text style={styles.categoryText}>Category: {expense.category}</Text>
+                      <Text style={styles.categoryDateText}>Date: {expense.date}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => handleDeleteExpense(expense)} style={styles.deleteButton}>
+                      <FontAwesome name="trash" size={35} color="#327AFf" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </TouchableOpacity>
             </View>
           )}
@@ -120,7 +133,6 @@ export default function Home() {
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
       <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} />
-
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

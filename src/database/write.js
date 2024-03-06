@@ -3,11 +3,12 @@ import { formatDateToDB, parseStringToFloat } from '../utils/utils';
 import { db } from './config';
 import { getUniqueId } from '../utils/deviceInfo';
 
-export async function addExpense(amount, description, date) {
+export async function addExpense(amount, description, date, category) {
   const newExpense = {
     amount: parseStringToFloat(amount),
     description: description,
     date: formatDateToDB(date),
+    category: category
   };
 
   try {
@@ -37,6 +38,7 @@ export async function updateExpense(expense) {
       amount: parseStringToFloat(expense.amount),
       description: expense.description,
       date: formatDateToDB(expense.date),
+      category: expense.category,
     };
 
     await updateDoc(expenseRef, updatedExpense);

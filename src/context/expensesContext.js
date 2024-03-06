@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import * as db from '../database/index';
-import { formatDateToDB } from '../utils/utils';
+import { formatDateToDB, getTimeRangeHeaderText, isToday, isWithinLastSevenDays, isThisMonth, isThisYear } from '../utils/utils';
 
 const ExpensesContext = createContext();
 SplashScreen.preventAutoHideAsync();
@@ -10,6 +10,12 @@ SplashScreen.preventAutoHideAsync();
 export const ExpensesProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [isDataLoaded, setDataLoaded] = useState(false);
+  const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [selectedButton, setSelectedButton] = useState('All Expenses');
+  const [headerText, setHeaderText] = useState('All Expenses');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const categories = ['All Categories', 'Hone', 'Food', 'Transportation', 'Shopping', 'Others'];
 
   const addExpenseToTheList = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -26,6 +32,8 @@ export const ExpensesProvider = ({ children }) => {
           expense.amount = editedExpense.amount || expense.amount == expense.amount;
           expense.description = editedExpense.description;
           expense.date = formatDateToDB(editedExpense.date);
+          expense.category = editedExpense.category;
+          
         }
         return expense;
       })
@@ -34,8 +42,6 @@ export const ExpensesProvider = ({ children }) => {
       Alert.alert('Error', 'Failed to edit expense.');
     }
   };
-
-
 
   const deleteExpenseFromList = async (deletedExpenseId) => {
     try {
@@ -47,8 +53,48 @@ export const ExpensesProvider = ({ children }) => {
     }
   };
 
+  const displayExpensesList = async (timeRange, selectedCategory) => {
+    setSelectedButton(timeRange);
+    setSelectedCategory(selectedCategory);
+
+    let updatedExpensesList = [...expenses];
+
+    switch (timeRange) {
+      case 'Today':
+        updatedExpensesList = expenses.filter(expense => isToday(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'Last Seven Days':
+        updatedExpensesList = expenses.filter(expense => isWithinLastSevenDays(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'This Month':
+        updatedExpensesList = expenses.filter(expense => isThisMonth(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      case 'This Year':
+        updatedExpensesList = expenses.filter(expense => isThisYear(new Date(expense.date + 'T12:00:00Z')));
+        break;
+      default:
+        updatedExpensesList = expenses;
+    }
+    if (selectedCategory !== 'All Categories') {
+      updatedExpensesList = updatedExpensesList.filter(expense => expense.category === selectedCategory);
+    }
+    
+
+    setFilteredExpenses(updatedExpensesList);
+
+    const listHeader = getTimeRangeHeaderText(timeRange);
+    setHeaderText(listHeader);
+
+    calculateTotalSpent(updatedExpensesList);
+  }
+
+  const calculateTotalSpent = (filteredExpenses) => {
+    const total = filteredExpenses.reduce((total, expense) => total + Number(expense.amount), 0);
+    setTotalSpent(total);
+  }
+
   useEffect(() => {
-    const getAllExpenses = async () => {
+    const getAllExpenses = async () => { 
       try {
         const expensesFromDB = await db.getAllExpenses();
         setExpenses(expensesFromDB);
@@ -64,9 +110,29 @@ export const ExpensesProvider = ({ children }) => {
     getAllExpenses();
   }, []);
 
+  useEffect(() => {
+    setFilteredExpenses(expenses);
+    setSelectedButton('All Expenses');
+    calculateTotalSpent(expenses);
+  }, [expenses]);
+
   return (
     <ExpensesContext.Provider
-      value={{ expenses, addExpenseToTheList, editExpenseInList, deleteExpenseFromList, isDataLoaded }}
+      value={
+        {
+          expenses,
+          addExpenseToTheList,
+          editExpenseInList,
+          deleteExpenseFromList,
+          isDataLoaded,
+          filteredExpenses,
+          setFilteredExpenses,
+          displayExpensesList,
+          totalSpent,
+          selectedButton,
+          headerText
+        }
+      }
     >
       {children}
     </ExpensesContext.Provider>

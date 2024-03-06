@@ -6,6 +6,7 @@ import Insights from './src/screens/Insights';
 import Settings from './src/screens/Settings';
 import { ExpensesProvider } from './src/context/expensesContext';
 
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {

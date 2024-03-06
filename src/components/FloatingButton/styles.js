@@ -7,8 +7,9 @@ const styles = StyleSheet.create({
     right: 16,
     width: 66,
     height: 66,
-    borderRadius: 33,
-    backgroundColor: '#D3D3D3',
+    borderRadius: 36,
+    backgroundColor: '#027DFF',
+    color: 'white',
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({

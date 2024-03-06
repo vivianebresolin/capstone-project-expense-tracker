@@ -1,42 +1,60 @@
-import { useState } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import styles from "./styles";
+import { useState, useEffect } from 'react';
+import { View, Text, ActivityIndicator, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
+import FilterButton from "../../components/FilterButton";
+import TotalSpentCard from '../../components/TotalSpentCard';
 import { useExpenses } from '../../context/expensesContext';
+import CategoriesDropdown from "../../components/CategoriesDropdown";
+import { FontAwesome } from '@expo/vector-icons';
+import styles from "./styles";
 
 export default function Home() {
-  const { expenses, isDataLoaded } = useExpenses();
+  const {
+    isDataLoaded,
+    deleteExpenseFromList,
+    filteredExpenses,
+    displayExpensesList,
+    totalSpent,
+    selectedButton,
+    headerText,
+    categories
+  } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
-
+ //Filter expenses by date and category
+  const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+ 
   //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
-  //Delete 
-  const [expenseToDelete, setExpenseToDelete] = useState(null);
-  const { deleteExpenseFromList } = useExpenses();
 
+  const categoryIcons = {Home: 'home', Food: 'cutlery', Transportation: 'car', Shopping: 'shopping-cart', Others: 'money',};
+
+  useEffect(() => {
+    displayExpensesList(selectedButton, selectedCategory);
+  }, [selectedButton, selectedCategory]);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
   const handlePressAddExpense = () => {
     setModalVisible(true);
   }
 
   const handleEditExpense = (expense) => {
-    console.log('handleEditExpense', expense)
     setEditedExpense(expense);
     setEditModalVisible(true);
   };
 
   const handleDeleteExpense = async (expense) => {
-    console.log('handleDelete', expense)
-    setExpenseToDelete(expense);
     Alert.alert(
       'Delete Expense',
       'Are you sure you want to delete this expense?',
       [
         {
           text: 'Cancel',
-          onPress: () => setExpenseToDelete(null),
           style: 'cancel',
         },
         {
@@ -44,7 +62,6 @@ export default function Home() {
           onPress: async () => {
             try {
               await deleteExpenseFromList(expense.id);
-              setExpenseToDelete(null);
             } catch (error) {
               console.error('Error deleting expense: ', error);
             }
@@ -65,19 +82,53 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {expenses.length > 0 && (
-        expenses.map((expense, index) =>
-          <View key={index} style={{ borderWidth: 1, borderColor: 'black', padding: 5, margin: 3, backgroundColor: 'white' }}>
-            <TouchableOpacity onPress={() => handleEditExpense(expense)} >
-              <Text>Amount: {expense.amount}</Text>
-              <Text>Date: {expense.date}</Text>
-              <Text>Description: {expense.description}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDeleteExpense(expense)}>
-              <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )
+      <View style={styles.filtersContainer}>
+        {filterButtonsTitles.map((title, index) =>
+          <FilterButton
+            key={index}
+            title={title}
+            onPress={() => displayExpensesList(title)}
+            isSelected={selectedButton === title}
+          />
+        )}
+      </View>
+
+      <CategoriesDropdown
+        categories={['All Categories', 'Home', 'Food', 'Transportation', 'Shopping', 'Others']}
+        onSelectCategory={handleCategoryChange}
+      />
+
+      <TotalSpentCard amount={totalSpent} />
+
+      <View style={styles.listHeader}>
+        <Text style={styles.headerText}>{headerText}</Text>
+      </View>
+      {filteredExpenses.length === 0 ? (
+        <Text style={styles.noExpenseText}>No expenses for this period.</Text>
+      ) : (
+        <ScrollView>
+          {filteredExpenses.map((expense, index) =>
+            <View key={index}>
+              <TouchableOpacity onPress={() => handleEditExpense(expense)} >
+                <View style={styles.expensesContainer}>
+                  <View style={styles.expenseContainer}>
+                    <View style={styles.iconContainer}>
+                      <FontAwesome name={categoryIcons[expense.category] || 'home'} size={35} color="#327AFf" />
+                    </View>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.categoryAmountText}>{expense.description}: <Text style={styles.categoryInnerAmountText}> - {expense.amount} $</Text></Text>
+                      <Text style={styles.categoryText}>Category: {expense.category}</Text>
+                      <Text style={styles.categoryDateText}>Date: {expense.date}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => handleDeleteExpense(expense)} style={styles.deleteButton}>
+                      <FontAwesome name="trash" size={35} color="#327AFf" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
       )}
 
       <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />

@@ -100,6 +100,7 @@ export default function Form({ closeModal, modalVisible }) {
             setAmount(text);
           }
         }}
+        maxLength={16}
       />
 
       <Text style={styles.label}>Description*:</Text>
@@ -108,6 +109,7 @@ export default function Form({ closeModal, modalVisible }) {
         placeholder="Enter description"
         value={description}
         onChangeText={(text) => setDescription(text)}
+        maxLength={35}
       />
 
       <View>

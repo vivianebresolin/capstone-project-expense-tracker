@@ -8,6 +8,7 @@ import TotalSpentCard from '../../components/TotalSpentCard';
 import { useExpenses } from '../../context/expensesContext';
 import CategoriesDropdown from "../../components/CategoriesDropdown";
 import { FontAwesome } from '@expo/vector-icons';
+import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 
 export default function Home() {
@@ -19,18 +20,17 @@ export default function Home() {
     totalSpent,
     selectedButton,
     headerText,
-    categories
   } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
- //Filter expenses by date and category
+  //Filter expenses by date and category
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
- 
+
   //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
 
-  const categoryIcons = {Home: 'home', Food: 'cutlery', Transportation: 'car', Shopping: 'shopping-cart', Others: 'money',};
+  const categoryIcons = { Home: 'home', Food: 'cutlery', Transit: 'car', Shopping: 'shopping-cart', Others: 'money' };
 
   useEffect(() => {
     displayExpensesList(selectedButton, selectedCategory);
@@ -62,8 +62,9 @@ export default function Home() {
           onPress: async () => {
             try {
               await deleteExpenseFromList(expense.id);
+              Alert.alert('Delete expense', 'Expense deleted with success!');
             } catch (error) {
-              console.error('Error deleting expense: ', error);
+              Alert.alert('Error deleting expense ', error);
             }
           },
         },
@@ -94,7 +95,7 @@ export default function Home() {
       </View>
 
       <CategoriesDropdown
-        categories={['All Categories', 'Home', 'Food', 'Transportation', 'Shopping', 'Others']}
+        categories={['All Categories', 'Home', 'Food', 'Transit', 'Shopping', 'Others']}
         onSelectCategory={handleCategoryChange}
       />
 
@@ -113,16 +114,20 @@ export default function Home() {
                 <View style={styles.expensesContainer}>
                   <View style={styles.expenseContainer}>
                     <View style={styles.iconContainer}>
-                      <FontAwesome name={categoryIcons[expense.category] || 'home'} size={35} color="#327AFf" />
+                      <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color="#327AFf" />
                     </View>
                     <View style={styles.textContainer}>
-                      <Text style={styles.categoryAmountText}>{expense.description}: <Text style={styles.categoryInnerAmountText}> - {expense.amount} $</Text></Text>
-                      <Text style={styles.categoryText}>Category: {expense.category}</Text>
-                      <Text style={styles.categoryDateText}>Date: {expense.date}</Text>
+                      <Text style={styles.categoryAmountText}>{expense.description}</Text>
+                      <Text style={styles.categoryText}>{expense.category} | {formatDateString(expense.date)} </Text>
                     </View>
-                    <TouchableOpacity onPress={() => handleDeleteExpense(expense)} style={styles.deleteButton}>
-                      <FontAwesome name="trash" size={35} color="#327AFf" />
-                    </TouchableOpacity>
+                    <View>
+                      <Text style={styles.categoryInnerAmountText}> -${expense.amount}</Text>
+                    </View>
+                    <View style={styles.deleteButton}>
+                      <TouchableOpacity onPress={() => handleDeleteExpense(expense)} >
+                        <FontAwesome name="trash" size={22} color="gray" />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </TouchableOpacity>

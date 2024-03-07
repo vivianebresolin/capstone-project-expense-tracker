@@ -4,31 +4,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   expenseContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   iconContainer: {
-    marginRight: 10, 
+    height: 50,
+    width: 50,
     backgroundColor: '#E2E2E2',
-    borderRadius: 90,
+    borderRadius: 50,
+    padding: 6,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   expenseText: {
     fontSize: 16,
     color: '#333',
   },
-
   textContainer: {
-    flex: 1, 
+    flex: 1,
+    marginLeft: 10
   },
-
   expensesContainer: {
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     backgroundColor: '#FCFCFC',
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 8,
     padding: 16,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -44,31 +46,22 @@ const styles = StyleSheet.create({
   categoryInnerAmountText: {
     fontSize: 20,
     marginBottom: 3,
-    color:'red',
+    color: 'red',
     fontWeight: '400',
   },
-
-
   categoryDateText: {
     fontSize: 14,
     marginBottom: 3,
     color: "#666666",
   },
-  
   categoryText: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 3,
     color: "#666666"
-
   },
-
   deleteButton: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    padding: 1,
-    marginHorizontal: 20,
-    marginVertical: 2, 
+    marginLeft: 25,
+    marginRight: 5,
   },
   loadingIndicatorContainer: {
     flex: 1,
@@ -83,9 +76,9 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 8
   },
-  listHeader: {  
+  listHeader: {
     fontWeight: 'bold',
-    color:'white',
+    color: 'white',
     paddingTop: 8,
     paddingBottom: 4,
     paddingLeft: 2,
@@ -96,14 +89,12 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 16,
     fontWeight: 'bold',
-    
   },
   noExpenseText: {
     margin: 10,
     fontWeight: '400',
     textAlign: 'left',
     fontSize: 16,
-    
   }
 });
 

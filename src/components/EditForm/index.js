@@ -134,6 +134,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
         placeholder="Enter amount"
         value={amount || expenseToEdit.amount}
         onChangeText={(text) => setAmount(text)}
+        maxLength={17}
       />
       <Text style={styles.label}>New Description:</Text>
       <TextInput
@@ -141,6 +142,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
         placeholder="Enter description"
         value={description || expenseToEdit.description}
         onChangeText={(text) => setDescription(text)}
+        maxLength={35}
       />
 
       <View>

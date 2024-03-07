@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from 'react-native-picker-select';
 import * as db from '../../database/index';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
-import RNPickerSelect from 'react-native-picker-select';
-
 
 export default function Form({ closeModal, modalVisible }) {
   const { addExpenseToTheList } = useExpenses();
@@ -31,13 +30,10 @@ export default function Form({ closeModal, modalVisible }) {
     await db.addExpense(amount, description, selectedDate, selectedCategory)
       .then((result) => {
         addExpenseToTheList(result);
-
         setAmount('');
         setDescription('');
         setSelectedDate(new Date());
         setPreviousDate(new Date());
-
-
         setIsSavingExpense(false)
 
         Alert.alert('Add expense', 'Expense added successfully!', [
@@ -123,12 +119,6 @@ export default function Form({ closeModal, modalVisible }) {
             </View>
           </TouchableOpacity>
         )}
-        <Text style={styles.label}>Category:</Text>
-        <RNPickerSelect
-          placeholder={{ label: 'Select a category', value: null }}
-          onValueChange={(value) => setSelectedCategory(value)}
-          items={categories.map(category => ({ label: category, value: category }))}
-        />
 
         {showDatePicker && (
           <DateTimePicker
@@ -151,6 +141,18 @@ export default function Form({ closeModal, modalVisible }) {
           </View>
         )}
       </View>
+
+      <View>
+        <Text style={styles.label}>Category*:</Text>
+        <View style={[styles.input, styles.pickerSelect]}>
+          <RNPickerSelect
+            placeholder={{ label: 'Select a category...', value: null }}
+            onValueChange={(value) => setSelectedCategory(value)}
+            items={categories.map(category => ({ label: category, value: category }))}
+          />
+        </View>
+      </View>
+
       <TouchableOpacity onPress={handleAddExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Add Expense</Text>
       </TouchableOpacity>

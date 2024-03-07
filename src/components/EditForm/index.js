@@ -18,29 +18,29 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
   const [category, setSelectedCategory] = useState('');
-  const categories = ['Home','Food', 'Transportation', 'Shopping', 'Others'];
+  const categories = ['Home', 'Food', 'Transportation', 'Shopping', 'Others'];
 
 
   const handleEditingExpense = async () => {
     setIsEditedExpense(true);
-  
+
     try {
       const editedExpense = {
         id: expenseToEdit.id,
       };
-  
+
       if (amount !== '') {
         editedExpense.amount = amount;
       } else {
         editedExpense.amount = expenseToEdit.amount;
       }
-  
+
       if (description !== '') {
         editedExpense.description = description;
       } else {
         editedExpense.description = expenseToEdit.description;
       }
-  
+
       if (selectedDate !== expenseToEdit.date) {
         editedExpense.date = selectedDate;
       } else {
@@ -52,12 +52,12 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       } else {
         editedExpense.category = expenseToEdit.category;
       }
-     
+
       await db.updateExpense(editedExpense);
       editExpenseInList(editedExpense);
-  
+
       setIsEditedExpense(false);
-  
+
       Alert.alert(
         'Update expense',
         'Expense updated successfully!',
@@ -74,7 +74,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       Alert.alert('Error', `Error trying to edit expense: ${error}`);
     }
   };
-  
+
 
 
   const toggleDatePicker = () => {
@@ -118,60 +118,63 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       <TextInput
         style={styles.input}
         keyboardType='numeric'
-        placeholder= {expenseToEdit.amount}
+        placeholder={expenseToEdit.amount}
         value={amount}
-        onChangeText={(text) => setAmount(text)}
+        onChangeText={(text) => {
+          if (text !== '' && !text.startsWith('-')) {
+            setAmount(text);
+          }
+        }}
       />
-
       <Text style={styles.label}>New Description:</Text>
       <TextInput
         style={styles.input}
-        placeholder= {expenseToEdit.description}
+        placeholder={expenseToEdit.description}
         value={description}
         onChangeText={(text) => setDescription(text)}
       />
 
-<View>
-  <Text style={styles.label}>New Date:</Text>
-  {!showDatePicker && (
-    <TouchableOpacity onPress={toggleDatePicker}>
-      <View style={styles.input}>
-        <Text style={styles.dateText} >{expenseToEdit.date}</Text>
+      <View>
+        <Text style={styles.label}>New Date:</Text>
+        {!showDatePicker && (
+          <TouchableOpacity onPress={toggleDatePicker}>
+            <View style={styles.input}>
+              <Text style={styles.dateText} >{expenseToEdit.date}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        <View>
+          <Text style={styles.label}>New Category:</Text>
+          <RNPickerSelect
+            placeholder={{ label: `Selected category: ${expenseToEdit.category}`, value: expenseToEdit.category }}
+            items={categories.map(category => ({ label: category, value: category }))}
+            onValueChange={(value) => setSelectedCategory(value)}
+            value={category} // Update this line
+          />
+        </View>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="spinner"
+            onChange={handleDateChange}
+            style={styles.datePicker}
+          />
+        )}
+
+        {showDatePicker && !isAndroid && (
+          <View style={styles.iosDatePickerButtonsContainer}>
+            <TouchableOpacity onPress={iosCancel} style={styles.iosButton}>
+              <Text style={styles.textCancelButton}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={iosConfirm} style={styles.iosButton}>
+              <Text style={styles.textConfirmButton}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-    </TouchableOpacity>
-  )}
-
-<View>
-  <Text style={styles.label}>New Category:</Text>
-  <RNPickerSelect
-    placeholder={{ label: `Selected category: ${expenseToEdit.category}`, value: expenseToEdit.category }}
-    items={categories.map(category => ({ label: category, value: category }))}
-    onValueChange={(value) => setSelectedCategory(value)}
-    value={category} // Update this line
-  />
-</View>
-
-  {showDatePicker && (
-    <DateTimePicker
-      value={selectedDate}
-      mode="date"
-      display="spinner"
-      onChange={handleDateChange}
-      style={styles.datePicker}
-    />
-  )}
-
-  {showDatePicker && !isAndroid && (
-    <View style={styles.iosDatePickerButtonsContainer}>
-      <TouchableOpacity onPress={iosCancel} style={styles.iosButton}>
-        <Text style={styles.textCancelButton}>Cancel</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={iosConfirm} style={styles.iosButton}>
-        <Text style={styles.textConfirmButton}>Confirm</Text>
-      </TouchableOpacity>
-    </View>
-  )}
-</View>
 
       <TouchableOpacity onPress={handleEditingExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Edit Expense</Text>

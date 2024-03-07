@@ -25,7 +25,7 @@ const CategoriesDropdown = ({ categories, onSelectCategory }) => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
-    paddingHorizontal: 106,
+    paddingHorizontal: 104,
     backgroundColor: '#E2E2E2',
   },
 });

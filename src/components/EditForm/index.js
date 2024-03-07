@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Plat
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { useExpenses } from '../../context/expensesContext';
-import { parseStringToFloat } from '../../utils/utils';
+import { formatDateString, parseStringToFloat } from '../../utils/utils';
 import * as db from '../../database/index';
 import styles from "./styles";
 
@@ -36,6 +36,11 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const handleEditingExpense = async () => {
     if (!amount || !description || !selectedDate || !category) {
       Alert.alert('Edit expense', 'All fields are required.');
+      return;
+    }
+
+    if (parseStringToFloat(amount) == 0.00) {
+      Alert.alert('Add expense', 'Amount cannot be zero.');
       return;
     }
 
@@ -150,7 +155,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
         {!showDatePicker && (
           <TouchableOpacity onPress={toggleDatePicker}>
             <View style={styles.input}>
-              <Text style={styles.dateText} >{expenseToEdit.date}</Text>
+              <Text style={styles.dateText}>{formatDateString(expenseToEdit.date)}</Text>
             </View>
           </TouchableOpacity>
         )}

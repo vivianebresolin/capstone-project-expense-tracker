@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Plat
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import * as db from '../../database/index';
-import { formatDateString } from '../../utils/utils';
+import { formatDateString, parseStringToFloat } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
@@ -36,6 +36,11 @@ export default function Form({ closeModal, modalVisible }) {
   const handleAddExpense = async () => {
     if (!amount || !description || !selectedDate || !selectedCategory) {
       Alert.alert('Add expense', 'All fields are required.');
+      return;
+    }
+
+    if (parseStringToFloat(amount) == 0.00) {
+      Alert.alert('Add expense', 'Amount cannot be zero.');
       return;
     }
 

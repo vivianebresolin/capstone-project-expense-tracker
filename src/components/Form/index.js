@@ -7,9 +7,23 @@ import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
 
-export default function Form({ closeModal, modalVisible }) {
-  const { addExpenseToTheList } = useExpenses();
+const { format: formatCurrency } = Intl.NumberFormat('en-CA', {
+  currency: 'CAD',
+  style: 'currency',
+});
+
+function useAmountInput() {
   const [amount, setAmount] = useState('');
+  function handleChange(value) {
+    const decimal = Number(value.replace(/\D/g, '')) / 100;
+    setAmount(formatCurrency(decimal || 0).replace('$\xa0', ''));  // '$\xa0' is used as a string to represent the currency symbol for the Canadian Dollar with a non-breaking space between the symbol and the amount
+  }
+  return [amount, handleChange];
+}
+
+export default function Form({ closeModal, modalVisible }) {
+  const [amount, setAmount] = useAmountInput();
+  const { addExpenseToTheList } = useExpenses();
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState(selectedDate);
@@ -78,6 +92,7 @@ export default function Form({ closeModal, modalVisible }) {
     }
   };
 
+
   if (isSavingExpense) {
     return (
       <View style={styles.containerSavingExpense}>
@@ -95,12 +110,8 @@ export default function Form({ closeModal, modalVisible }) {
         keyboardType='numeric'
         placeholder="Enter amount"
         value={amount}
-        onChangeText={(text) => {
-          if (text !== '' && !text.startsWith('-')) {
-            setAmount(text);
-          }
-        }}
-        maxLength={16}
+        onChangeText={text => setAmount(text)}
+        maxLength={17}
       />
 
       <Text style={styles.label}>Description*:</Text>

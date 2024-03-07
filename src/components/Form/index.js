@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as db from '../../database/index';
 import { formatDateString } from '../../utils/utils';
@@ -9,7 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 
 
 export default function Form({ closeModal, modalVisible }) {
-  const { addExpenseToTheList} = useExpenses();
+  const { addExpenseToTheList } = useExpenses();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,7 +18,7 @@ export default function Form({ closeModal, modalVisible }) {
   const [isSavingExpense, setIsSavingExpense] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const isAndroid = Platform.OS === 'android';
-  const categories = ['Home','Food', 'Transportation', 'Shopping', 'Others'];
+  const categories = ['Home', 'Food', 'Transportation', 'Shopping', 'Others'];
 
   const handleAddExpense = async () => {
     if (!amount || !description || !selectedDate || !selectedCategory) {
@@ -36,7 +36,7 @@ export default function Form({ closeModal, modalVisible }) {
         setDescription('');
         setSelectedDate(new Date());
         setPreviousDate(new Date());
-        
+
 
         setIsSavingExpense(false)
 
@@ -99,7 +99,11 @@ export default function Form({ closeModal, modalVisible }) {
         keyboardType='numeric'
         placeholder="Enter amount"
         value={amount}
-        onChangeText={(text) => setAmount(text)}
+        onChangeText={(text) => {
+          if (text !== '' && !text.startsWith('-')) {
+            setAmount(text);
+          }
+        }}
       />
 
       <Text style={styles.label}>Description*:</Text>
@@ -150,7 +154,7 @@ export default function Form({ closeModal, modalVisible }) {
       <TouchableOpacity onPress={handleAddExpense} style={styles.addExpenseButton}>
         <Text style={styles.textButtonAddExpense}>Add Expense</Text>
       </TouchableOpacity>
-      
+
     </View>
   );
 };

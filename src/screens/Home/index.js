@@ -64,7 +64,7 @@ export default function Home() {
               await deleteExpenseFromList(expense.id);
               Alert.alert('Delete expense', 'Expense deleted with success!');
             } catch (error) {
-              Alert.alert('Error deleting expense ', error);
+              Alert.alert('Error', `Error trying to delete expense: ${error}`);
             }
           },
         },
@@ -95,7 +95,7 @@ export default function Home() {
       </View>
 
       <CategoriesDropdown
-        categories={['All Categories', 'Home', 'Food', 'Transit', 'Shopping', 'Others']}
+        categories={['Home', 'Food', 'Transit', 'Shopping', 'Others']}
         onSelectCategory={handleCategoryChange}
       />
 

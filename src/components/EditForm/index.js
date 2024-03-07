@@ -1,27 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as db from '../../database/index';
-import { formatDateString } from '../../utils/utils';
-import styles from "./styles";
-import { useExpenses } from '../../context/expensesContext';
 import RNPickerSelect from 'react-native-picker-select';
+import { useExpenses } from '../../context/expensesContext';
+import { parseStringToFloat } from '../../utils/utils';
+import * as db from '../../database/index';
+import styles from "./styles";
 
+const { format: formatCurrency } = Intl.NumberFormat('en-CA', {
+  currency: 'CAD',
+  style: 'currency',
+});
+
+function useAmountInput() {
+  const [amount, setAmount] = useState('');
+  function handleChange(value) {
+    const decimal = Number(value.replace(/\D/g, '')) / 100;
+    setAmount(formatCurrency(decimal || 0).replace('$\xa0', ''));  // '$\xa0' is used as a string to represent the currency symbol for the Canadian Dollar with a non-breaking space between the symbol and the amount
+  }
+  return [amount, handleChange];
+}
 
 export default function EditForm({ closeEditModal, isEditModalVisible, expenseToEdit }) {
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useAmountInput();
+  const [description, setDescription] = useState(expenseToEdit.description);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState(selectedDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
-  const [category, setSelectedCategory] = useState('');
-  const categories = ['Home', 'Food', 'Transportation', 'Shopping', 'Others'];
-
+  const [category, setSelectedCategory] = useState(expenseToEdit.category);
+  const categories = ['Home', 'Food', 'Transit', 'Shopping', 'Others'];
 
   const handleEditingExpense = async () => {
+    if (!amount || !description || !selectedDate || !category) {
+      Alert.alert('Edit expense', 'All fields are required.');
+      return;
+    }
+
     setIsEditedExpense(true);
 
     try {
@@ -30,9 +47,9 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       };
 
       if (amount !== '') {
-        editedExpense.amount = amount;
+        editedExpense.amount = parseStringToFloat(amount);
       } else {
-        editedExpense.amount = expenseToEdit.amount;
+        editedExpense.amount = parseStringToFloat(expenseToEdit.amount);
       }
 
       if (description !== '') {
@@ -55,7 +72,6 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
 
       await db.updateExpense(editedExpense);
       editExpenseInList(editedExpense);
-
       setIsEditedExpense(false);
 
       Alert.alert(
@@ -70,12 +86,9 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       );
     } catch (error) {
       setIsEditedExpense(false);
-      console.error('Error editing expense:', error);
       Alert.alert('Error', `Error trying to edit expense: ${error}`);
     }
   };
-
-
 
   const toggleDatePicker = () => {
     setShowDatePicker(!showDatePicker)
@@ -118,19 +131,15 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       <TextInput
         style={styles.input}
         keyboardType='numeric'
-        placeholder={expenseToEdit.amount}
-        value={amount}
-        onChangeText={(text) => {
-          if (text !== '' && !text.startsWith('-')) {
-            setAmount(text);
-          }
-        }}
+        placeholder="Enter amount"
+        value={amount || expenseToEdit.amount}
+        onChangeText={(text) => setAmount(text)}
       />
       <Text style={styles.label}>New Description:</Text>
       <TextInput
         style={styles.input}
-        placeholder={expenseToEdit.description}
-        value={description}
+        placeholder="Enter description"
+        value={description || expenseToEdit.description}
         onChangeText={(text) => setDescription(text)}
       />
 
@@ -143,16 +152,6 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
             </View>
           </TouchableOpacity>
         )}
-
-        <View>
-          <Text style={styles.label}>New Category:</Text>
-          <RNPickerSelect
-            placeholder={{ label: `Selected category: ${expenseToEdit.category}`, value: expenseToEdit.category }}
-            items={categories.map(category => ({ label: category, value: category }))}
-            onValueChange={(value) => setSelectedCategory(value)}
-            value={category} // Update this line
-          />
-        </View>
 
         {showDatePicker && (
           <DateTimePicker
@@ -174,6 +173,18 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
             </TouchableOpacity>
           </View>
         )}
+      </View>
+
+      <View>
+        <Text style={styles.label}>New Category:</Text>
+        <View style={[styles.input, styles.pickerSelect]}>
+          <RNPickerSelect
+            placeholder={{ label: "Select a category...", value: null }}
+            items={categories.map(category => ({ label: category, value: category }))}
+            onValueChange={(value) => setSelectedCategory(value)}
+            value={category || expenseToEdit.category}
+          />
+        </View>
       </View>
 
       <TouchableOpacity onPress={handleEditingExpense} style={styles.addExpenseButton}>

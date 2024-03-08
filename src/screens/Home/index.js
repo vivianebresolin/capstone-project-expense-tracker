@@ -109,7 +109,7 @@ export default function Home() {
       ) : (
         <ScrollView>
           {filteredExpenses.map((expense, index) =>
-            <View key={index}>
+            <View key={index} style={index === filteredExpenses.length - 1 && { marginBottom: 75 }}>
               <TouchableOpacity onPress={() => handleEditExpense(expense)} >
                 <View style={styles.expensesContainer}>
                   <View style={styles.expenseContainer}>

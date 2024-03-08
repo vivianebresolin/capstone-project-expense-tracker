@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Plat
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { useExpenses } from '../../context/expensesContext';
-import { formatDateString, parseStringToFloat } from '../../utils/utils';
+import { formatDateString, parseStringToFloat, formatDateToDB } from '../../utils/utils';
 import * as db from '../../database/index';
 import styles from "./styles";
 
@@ -12,8 +12,8 @@ const { format: formatCurrency } = Intl.NumberFormat('en-CA', {
   style: 'currency',
 });
 
-function useAmountInput() {
-  const [amount, setAmount] = useState('');
+function useAmountInput(amountToEdit) {
+  const [amount, setAmount] = useState(amountToEdit);
   function handleChange(value) {
     const decimal = Number(value.replace(/\D/g, '')) / 100;
     setAmount(formatCurrency(decimal || 0).replace('$\xa0', ''));  // '$\xa0' is used as a string to represent the currency symbol for the Canadian Dollar with a non-breaking space between the symbol and the amount
@@ -22,7 +22,7 @@ function useAmountInput() {
 }
 
 export default function EditForm({ closeEditModal, isEditModalVisible, expenseToEdit }) {
-  const [amount, setAmount] = useAmountInput();
+  const [amount, setAmount] = useAmountInput(expenseToEdit.amount);
   const [description, setDescription] = useState(expenseToEdit.description);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState(selectedDate);
@@ -35,12 +35,18 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
 
   const handleEditingExpense = async () => {
     if (!amount || !description || !selectedDate || !category) {
+      console.log(amount, description, selectedDate, category)
       Alert.alert('Edit expense', 'All fields are required.');
       return;
     }
 
     if (parseStringToFloat(amount) == 0.00) {
-      Alert.alert('Add expense', 'Amount cannot be zero.');
+      Alert.alert('Edit expense', 'Amount cannot be zero.');
+      return;
+    }
+
+    if (amount === expenseToEdit.amount && description === expenseToEdit.description && formatDateToDB(selectedDate) === expenseToEdit.date && category === expenseToEdit.category) {
+      Alert.alert('Edit expense', 'There is no new data to save.');
       return;
     }
 

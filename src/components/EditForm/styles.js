@@ -65,6 +65,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8
   },
+  pickerSelect: {
+    padding: 0,
+    justifyContent: 'center'
+  }
 });
 
 export default styles;

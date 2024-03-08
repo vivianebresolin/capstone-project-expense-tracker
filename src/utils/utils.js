@@ -36,7 +36,7 @@ export function formatDateToDB(inputDateString) {
 }
 
 export function parseStringToFloat(userInput) {
-  const sanitizedInput = userInput.replace(',', '.').trim();
+  const sanitizedInput = userInput.replace('$', '').trim();
   const parsedValue = parseFloat(sanitizedInput);
 
   if (!isNaN(parsedValue)) {

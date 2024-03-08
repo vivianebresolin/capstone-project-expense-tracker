@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
 const CategoriesDropdown = ({ categories, onSelectCategory }) => {
@@ -12,12 +12,14 @@ const CategoriesDropdown = ({ categories, onSelectCategory }) => {
 
   return (
     <View style={styles.container}>
-      <RNPickerSelect
-        placeholder={{ label: 'Select category:', value: null }}
-        onValueChange={handleCategoryChange}
-        items={categories.map(category => ({ label: category, value: category }))}
-        value={selectedCategory}
-      />
+      <View>
+        <RNPickerSelect
+          placeholder={{ label: 'All Categories', value: 'All Categories' }}
+          onValueChange={handleCategoryChange}
+          items={categories.map(category => ({ label: category, value: category }))}
+          value={selectedCategory}
+        />
+      </View>
     </View>
   );
 };

@@ -19,20 +19,9 @@ const styles = StyleSheet.create({
         position: 'relative',
       },
       profileAvatar: {
-        width: 72,
-        height: 72,
+        width: 86,
+        height: 86,
         borderRadius: 9999,
-      },
-      profileAction: {
-        position: 'absolute',
-        right: -4,
-        bottom: -10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 28,
-        height: 28,
-        borderRadius: 9999,
-        backgroundColor: '#007bff',
       },
       profileName: {
         marginTop: 20,

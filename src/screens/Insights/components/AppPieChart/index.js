@@ -3,15 +3,22 @@ import { useRef } from 'react';
 import { Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import { useExpenses } from "../../../../context/expensesContext";
+import styles from "./styles";
 
 export default function AppPieChart() {
   const { expenses } = useExpenses();
   const categoryDataRef = useRef(null);
 
   function getCategoryData() {
-    const totalSum = expenses.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+    const currentYear = new Date().getFullYear();
 
-    const groupedData = expenses.reduce((acc, item) => {
+    // Filter expenses for the current year
+    const currentYearExpenses = expenses.filter(
+      item => new Date(item.date).getFullYear() === currentYear
+    );
+    const totalSum = currentYearExpenses.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+
+    const groupedData = currentYearExpenses.reduce((acc, item) => {
       const category = item.category;
       acc[category] = acc[category] || { total: 0 };
       acc[category].total += parseFloat(item.amount);
@@ -44,20 +51,6 @@ export default function AppPieChart() {
 
   const pieData = getCategoryData();
 
-  const renderDot = color => {
-    return (
-      <View
-        style={{
-          height: 10,
-          width: 10,
-          borderRadius: 5,
-          backgroundColor: color,
-          marginRight: 10,
-        }}
-      />
-    );
-  };
-
   const renderLegendComponent = () => {
     const halfLength = Math.ceil(categoryDataRef.current.length / 2); // Calculate the midpoint to split the data into two columns
     const firstColumnData = categoryDataRef.current.slice(0, halfLength);
@@ -68,16 +61,16 @@ export default function AppPieChart() {
         <View style={{ flex: 1 }}>
           {firstColumnData.map((item, index) => (
             <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-              {renderDot(item.color)}
-              <Text style={{ color: 'white', marginLeft: 5 }}>{`${item.category}: ${item.value}%`}</Text>
+              <View style={[styles.dot, { backgroundColor: item.color }]} />
+              <Text style={styles.legendText}>{`${item.category}: ${item.value}%`}</Text>
             </View>
           ))}
         </View>
         <View style={{ flex: 1 }}>
           {secondColumnData.map((item, index) => (
-            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-              {renderDot(item.color)}
-              <Text style={{ color: 'white', marginLeft: 5 }}>{`${item.category}: ${item.value}%`}</Text>
+            <View key={index} style={styles.legendTextView}>
+              <View style={[styles.dot, { backgroundColor: item.color }]} />
+              <Text style={styles.legendText}>{`${item.category}: ${item.value}%`}</Text>
             </View>
           ))}
         </View>
@@ -87,16 +80,11 @@ export default function AppPieChart() {
 
   return (
     <View
-      style={{
-        margin: 20,
-        padding: 16,
-        borderRadius: 20,
-        backgroundColor: '#232B5D',
-      }}>
-      <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+      style={styles.container}>
+      <Text style={styles.title}>
         Expenses Distribution
       </Text>
-      <View style={{ padding: 20, alignItems: 'center' }}>
+      <View style={styles.chartView}>
         <PieChart
           data={pieData}
           donut
@@ -106,7 +94,7 @@ export default function AppPieChart() {
           sectionAutoFocus
           radius={140}
           innerRadius={50}
-          innerCircleColor={'#232B5D'}
+          innerCircleColor="#232B5D"
         />
       </View>
       {renderLegendComponent()}

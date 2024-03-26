@@ -7,7 +7,18 @@ const styles = StyleSheet.create({
   },
   pieChartView: {
     marginVertical: 35
-  }
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
 });
 
 export default styles;

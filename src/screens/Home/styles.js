@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   noExpenseText: {
     margin: 10,
     fontWeight: '400',
-    textAlign: 'left',
+    textAlign: 'center',
     fontSize: 16,
   }
 });

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState } from 'react';
 
 const lightTheme = {
-  color: '#000000',
+  backgroundColor: undefined,
+  color: undefined
 };
 
 const darkTheme = {
@@ -9,7 +10,7 @@ const darkTheme = {
   color: '#E2E2E2'
 };
 
-const ThemeContext = createContext();
+export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);

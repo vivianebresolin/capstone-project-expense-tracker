@@ -103,7 +103,7 @@ export default function Home() {
         <Text style={[styles.headerText, { color: theme.color }]}>{headerText}</Text>
       </View>
       {filteredExpenses.length === 0 ? (
-        <Text style={styles.noExpenseText}>No expenses for this period.</Text>
+        <Text style={[styles.noExpenseText, { color: theme.color }]}>No expenses for this period.</Text>
       ) : (
         <ScrollView>
           {filteredExpenses.map((expense, index) =>
@@ -112,7 +112,7 @@ export default function Home() {
                 <View style={[styles.expensesContainer, isDarkMode && { backgroundColor: '#e3e3e3' }]}>
                   <View style={styles.expenseContainer}>
                     <View style={[styles.iconContainer, isDarkMode && { backgroundColor: '#ffffff' }]}>
-                      <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color="#327AFf" />
+                      <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color='#327AFF' />
                     </View>
                     <View style={styles.textContainer}>
                       <Text style={styles.categoryAmountText}>{expense.description}</Text>

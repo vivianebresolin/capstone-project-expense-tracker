@@ -10,6 +10,7 @@ import CategoriesDropdown from "../../components/CategoriesDropdown";
 import { FontAwesome } from '@expo/vector-icons';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
+import { useTheme } from '../../context/themeContext';
 
 export default function Home() {
   const {
@@ -22,14 +23,10 @@ export default function Home() {
     headerText,
   } = useExpenses();
   const [modalVisible, setModalVisible] = useState(false);
-  //Filter expenses by date and category
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
-
-  //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
-
   const categoryIcons = { Home: 'home', Food: 'cutlery', Transit: 'car', Shopping: 'shopping-cart', Others: 'money' };
 
   useEffect(() => {

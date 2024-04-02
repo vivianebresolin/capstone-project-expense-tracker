@@ -13,15 +13,16 @@ import {
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../../context/themeContext";
 
 export default function Settings() {
   const navigation = useNavigation();
   const [form, setForm] = useState({
-    darkMode: false,
     emailNotifications: true,
     pushNotifications: false,
   });
-  
+  const { isDarkMode, toggleTheme } = useTheme();
+
 
   const handleAboutPress = () => {
     Alert.alert(
@@ -29,7 +30,7 @@ export default function Settings() {
       'Developed by Kristina Papko && Viviane Bresolin',
       [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
-        
+
       ],
       { cancelable: false }
     );
@@ -45,7 +46,7 @@ export default function Settings() {
       <View style={styles.container}>
         <View style={styles.profile}>
           <TouchableOpacity
-            >
+          >
             <View style={styles.profileAvatarWrapper}>
               <Image
                 alt=""
@@ -67,7 +68,7 @@ export default function Settings() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Account Settings</Text>
             <TouchableOpacity
-              onPress={()=> navigation.navigate("EditProfile")}
+              onPress={() => navigation.navigate("EditProfile")}
               style={styles.row}>
               <Text style={styles.rowLabel}>Edit Profile</Text>
               <View style={styles.rowSpacer} />
@@ -80,8 +81,8 @@ export default function Settings() {
               <Text style={styles.rowLabel}>Dark Mode</Text>
               <View style={styles.rowSpacer} />
               <Switch
-                onValueChange={darkMode => setForm({ ...form, darkMode })}
-                value={form.darkMode} />
+                onValueChange={toggleTheme}
+                value={isDarkMode} />
             </View>
             <View style={styles.row}>
               <Text style={styles.rowLabel}>Push Notifications</Text>
@@ -101,14 +102,14 @@ export default function Settings() {
               style={styles.row}>
               <Text style={styles.rowLabel}>About Us</Text>
               <View style={styles.rowSpacer} />
-              
+
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleContactUsWebsite}
               style={styles.row}>
               <Text style={styles.rowLabel}>Contact Us</Text>
               <View style={styles.rowSpacer} />
-            
+
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {

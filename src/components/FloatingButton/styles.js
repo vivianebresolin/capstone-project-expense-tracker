@@ -3,8 +3,8 @@ import { StyleSheet, Platform } from "react-native";
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
+    bottom: 10,
+    right: 10,
     width: 66,
     height: 66,
     borderRadius: 36,

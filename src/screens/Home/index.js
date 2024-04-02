@@ -22,6 +22,7 @@ export default function Home() {
     selectedButton,
     headerText,
   } = useExpenses();
+  const { theme, isDarkMode } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -79,7 +80,7 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, theme]}>
       <View style={styles.filtersContainer}>
         {filterButtonsTitles.map((title, index) =>
           <FilterButton
@@ -99,7 +100,7 @@ export default function Home() {
       <TotalSpentCard amount={totalSpent} />
 
       <View style={styles.listHeader}>
-        <Text style={styles.headerText}>{headerText}</Text>
+        <Text style={[styles.headerText, { color: theme.color }]}>{headerText}</Text>
       </View>
       {filteredExpenses.length === 0 ? (
         <Text style={styles.noExpenseText}>No expenses for this period.</Text>
@@ -108,21 +109,21 @@ export default function Home() {
           {filteredExpenses.map((expense, index) =>
             <View key={index} style={index === filteredExpenses.length - 1 && { marginBottom: 75 }}>
               <TouchableOpacity onPress={() => handleEditExpense(expense)} >
-                <View style={styles.expensesContainer}>
+                <View style={[styles.expensesContainer, isDarkMode && { backgroundColor: '#e3e3e3' }]}>
                   <View style={styles.expenseContainer}>
-                    <View style={styles.iconContainer}>
+                    <View style={[styles.iconContainer, isDarkMode && { backgroundColor: '#ffffff' }]}>
                       <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color="#327AFf" />
                     </View>
                     <View style={styles.textContainer}>
                       <Text style={styles.categoryAmountText}>{expense.description}</Text>
-                      <Text style={styles.categoryText}>{expense.category} | {formatDateString(expense.date)} </Text>
+                      <Text style={[styles.categoryText, isDarkMode && { color: '#161616' }]}>{expense.category} | {formatDateString(expense.date)} </Text>
                     </View>
                     <View>
-                      <Text style={styles.categoryInnerAmountText}> -${expense.amount}</Text>
+                      <Text style={[styles.categoryInnerAmountText, isDarkMode && { color: '#990000', fontWeight: 'bold' }]}> -${expense.amount}</Text>
                     </View>
                     <View style={styles.deleteButton}>
                       <TouchableOpacity onPress={() => handleDeleteExpense(expense)} >
-                        <FontAwesome name="trash" size={22} color="gray" />
+                        <FontAwesome name="trash" size={22} color={isDarkMode ? '#2d2d2d' : 'gray'} />
                       </TouchableOpacity>
                     </View>
                   </View>

@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
 
 const lightTheme = {
-  background: '#FFFFFF',
-  text: '#000000',
+  color: '#000000',
 };
 
 const darkTheme = {
-  background: '#333333',
-  text: '#FFFFFF',
+  backgroundColor: '#333333',
+  color: '#E2E2E2'
 };
 
 const ThemeContext = createContext();

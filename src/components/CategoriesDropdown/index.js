@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import styles from "./styles";
 
 const CategoriesDropdown = ({ categories, onSelectCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -23,13 +24,5 @@ const CategoriesDropdown = ({ categories, onSelectCategory }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 10,
-    paddingHorizontal: 104,
-    backgroundColor: '#E2E2E2',
-  },
-});
 
 export default CategoriesDropdown;

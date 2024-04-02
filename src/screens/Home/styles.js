@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
   },
   expenseContainer: {
     flexDirection: 'row',
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     height: 50,
     width: 50,
-    backgroundColor: '#E2E2E2',
+    backgroundColor: '#ededed',
     borderRadius: 50,
     padding: 6,
     alignItems: 'center',
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     backgroundColor: '#FCFCFC',
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 8,
     padding: 16,
     shadowColor: '#000000',
@@ -74,17 +75,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 8
   },
   listHeader: {
     fontWeight: 'bold',
     color: 'white',
     paddingTop: 8,
     paddingBottom: 4,
-    paddingLeft: 2,
   },
   headerText: {
-    margin: 10,
+    marginVertical: 10,
     fontWeight: '500',
     textAlign: 'left',
     fontSize: 16,

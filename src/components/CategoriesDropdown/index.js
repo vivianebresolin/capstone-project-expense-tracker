@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
-import styles from "./styles";
+import { useTheme } from '../../context/themeContext'
+import { styles, pickerSelectStyles } from "./styles";
 
 const CategoriesDropdown = ({ categories, onSelectCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const { isDarkMode } = useTheme();
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
@@ -19,6 +22,13 @@ const CategoriesDropdown = ({ categories, onSelectCategory }) => {
           onValueChange={handleCategoryChange}
           items={categories.map(category => ({ label: category, value: category }))}
           value={selectedCategory}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          Icon={() => {
+            return (
+              <Entypo name="chevron-down" size={20} color='black' />
+            )
+          }}
         />
       </View>
     </View>

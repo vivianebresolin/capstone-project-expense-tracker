@@ -4,8 +4,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import * as db from '../../database/index';
 import { formatDateString, parseStringToFloat } from '../../utils/utils';
-import styles from "./styles";
 import { useExpenses } from '../../context/expensesContext';
+import { useTheme } from '../../context/themeContext';
+import styles from "./styles";
 
 const { format: formatCurrency } = Intl.NumberFormat('en-CA', {
   currency: 'CAD',
@@ -24,6 +25,7 @@ function useAmountInput() {
 export default function Form({ closeModal, modalVisible }) {
   const [amount, setAmount] = useAmountInput();
   const { addExpenseToTheList } = useExpenses();
+  const { theme, isDarkMode } = useTheme();
   const [description, setDescription] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState(selectedDate);
@@ -102,16 +104,16 @@ export default function Form({ closeModal, modalVisible }) {
     return (
       <View style={styles.containerSavingExpense}>
         <ActivityIndicator size="large" />
-        <Text style={styles.txtSavingExpense}>Saving new expense...</Text>
+        <Text style={[styles.txtSavingExpense, isDarkMode && { color: theme.color }]}>Saving new expense...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.formContainer}>
-      <Text style={styles.label}>Amount*:</Text>
+      <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>Amount*:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}
         keyboardType='numeric'
         placeholder="Enter amount"
         value={amount}
@@ -119,9 +121,9 @@ export default function Form({ closeModal, modalVisible }) {
         maxLength={17}
       />
 
-      <Text style={styles.label}>Description*:</Text>
+      <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>Description*:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}
         placeholder="Enter description"
         value={description}
         onChangeText={(text) => setDescription(text)}
@@ -129,10 +131,10 @@ export default function Form({ closeModal, modalVisible }) {
       />
 
       <View>
-        <Text style={styles.label}>Date*:</Text>
+        <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>Date*:</Text>
         {!showDatePicker && (
           <TouchableOpacity onPress={toggleDatePicker}>
-            <View style={styles.input}>
+            <View style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.dateText}>{formatDateString(selectedDate)}</Text>
             </View>
           </TouchableOpacity>
@@ -161,8 +163,8 @@ export default function Form({ closeModal, modalVisible }) {
       </View>
 
       <View>
-        <Text style={styles.label}>Category*:</Text>
-        <View style={[styles.input, styles.pickerSelect]}>
+        <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>Category*:</Text>
+        <View style={[styles.input, styles.pickerSelect, isDarkMode && { backgroundColor: '#FFFFFF' }]}>
           <RNPickerSelect
             placeholder={{ label: 'Select a category...', value: null }}
             onValueChange={(value) => setSelectedCategory(value)}

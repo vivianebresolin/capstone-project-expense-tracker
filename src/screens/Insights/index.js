@@ -2,12 +2,14 @@ import { ScrollView, Text, View, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AppPieChart from "./components/AppPieChart";
 import AppBarChart from "./components/AppBarChart";
-import styles from "./styles";
 import { useExpenses } from "../../context/expensesContext";
+import { useTheme } from "../../context/themeContext";
+import styles from "./styles";
 
 export default function Insights() {
   const { expenses } = useExpenses();
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   const handleAddExpense = () => {
     navigation.navigate("Home");
@@ -15,8 +17,8 @@ export default function Insights() {
 
   if (expenses.length === 0) {
     return (
-      <View style={styles.emptyState}>
-        <Text style={styles.emptyStateText}>
+      <View style={[styles.emptyState, { backgroundColor: theme.backgroundColor }]}>
+        <Text style={[styles.emptyStateText, { color: theme.color }]}>
           There is no data available to show insights
         </Text>
         <Button
@@ -29,7 +31,7 @@ export default function Insights() {
 
   return (
     <ScrollView
-      style={styles.scrollView}>
+      style={[styles.scrollView, { backgroundColor: theme.backgroundColor }]}>
       <AppBarChart />
       <View style={styles.pieChartView}>
         <AppPieChart />

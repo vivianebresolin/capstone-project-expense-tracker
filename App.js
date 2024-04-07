@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Entypo, Ionicons } from '@expo/vector-icons';
+import { ExpensesProvider } from './src/context/expensesContext';
+import { ThemeProvider, ThemeContext } from './src/context/themeContext';
 import Home from './src/screens/Home';
 import Insights from './src/screens/Insights';
 import Settings from './src/screens/Settings';
-import { ExpensesProvider } from './src/context/expensesContext';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EditProfile from './src/components/EditProfile';
 
 const App = () => {
@@ -14,9 +15,21 @@ const App = () => {
   const Tab = createBottomTabNavigator();
 
   const BottomTabScreen = () => {
+    const { theme, isDarkMode } = useContext(ThemeContext);
+
     return (
       <ExpensesProvider>
-        <Tab.Navigator>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarInactiveTintColor: theme.color,
+            tabBarStyle: isDarkMode ? { backgroundColor: theme.backgroundColor } : undefined,
+            tabBarLabelStyle: isDarkMode && { fontWeight: 'bold' },
+            headerTintColor: theme.color,
+            headerStyle: {
+              backgroundColor: theme.backgroundColor,
+            }
+          }}
+        >
           <Tab.Screen
             name="Home"
             component={Home}
@@ -53,14 +66,16 @@ const App = () => {
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="Bottom" component={BottomTabScreen} />
-        <Stack.Screen name="EditProfile" component={EditProfile} options={{title:'Edit Profile'}}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Bottom" component={BottomTabScreen} />
+          <Stack.Screen name="EditProfile" component={EditProfile} options={{ title: 'Edit Profile' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 

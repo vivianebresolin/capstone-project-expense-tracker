@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
 import FilterButton from "../../components/FilterButton";
 import TotalSpentCard from '../../components/TotalSpentCard';
-import { useExpenses } from '../../context/expensesContext';
 import CategoriesDropdown from "../../components/CategoriesDropdown";
-import { FontAwesome } from '@expo/vector-icons';
+import { useExpenses } from '../../context/expensesContext';
+import { useTheme } from '../../context/themeContext';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
 
@@ -21,15 +22,12 @@ export default function Home() {
     selectedButton,
     headerText,
   } = useExpenses();
+  const { theme, isDarkMode } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
-  //Filter expenses by date and category
   const filterButtonsTitles = ['All Expenses', 'Today', 'Last Seven Days', 'This Month', 'This Year'];
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
-
-  //Edit expenses
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
-
   const categoryIcons = { Home: 'home', Food: 'cutlery', Transit: 'car', Shopping: 'shopping-cart', Others: 'money' };
 
   useEffect(() => {
@@ -82,7 +80,7 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, theme]}>
       <View style={styles.filtersContainer}>
         {filterButtonsTitles.map((title, index) =>
           <FilterButton
@@ -102,30 +100,30 @@ export default function Home() {
       <TotalSpentCard amount={totalSpent} />
 
       <View style={styles.listHeader}>
-        <Text style={styles.headerText}>{headerText}</Text>
+        <Text style={[styles.headerText, { color: theme.color }]}>{headerText}</Text>
       </View>
       {filteredExpenses.length === 0 ? (
-        <Text style={styles.noExpenseText}>No expenses for this period.</Text>
+        <Text style={[styles.noExpenseText, { color: theme.color }]}>No expenses for this period.</Text>
       ) : (
         <ScrollView>
           {filteredExpenses.map((expense, index) =>
             <View key={index} style={index === filteredExpenses.length - 1 && { marginBottom: 75 }}>
               <TouchableOpacity onPress={() => handleEditExpense(expense)} >
-                <View style={styles.expensesContainer}>
+                <View style={[styles.expensesContainer, isDarkMode && { backgroundColor: '#e3e3e3' }]}>
                   <View style={styles.expenseContainer}>
-                    <View style={styles.iconContainer}>
-                      <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color="#327AFf" />
+                    <View style={[styles.iconContainer, isDarkMode && { backgroundColor: '#ffffff' }]}>
+                      <FontAwesome name={categoryIcons[expense.category] || 'dollar'} size={30} color='#327AFF' />
                     </View>
                     <View style={styles.textContainer}>
                       <Text style={styles.categoryAmountText}>{expense.description}</Text>
-                      <Text style={styles.categoryText}>{expense.category} | {formatDateString(expense.date)} </Text>
+                      <Text style={[styles.categoryText, isDarkMode && { color: '#161616' }]}>{expense.category} | {formatDateString(expense.date)} </Text>
                     </View>
                     <View>
-                      <Text style={styles.categoryInnerAmountText}> -${expense.amount}</Text>
+                      <Text style={[styles.categoryInnerAmountText, isDarkMode && { color: '#990000', fontWeight: 'bold' }]}> -${expense.amount}</Text>
                     </View>
                     <View style={styles.deleteButton}>
                       <TouchableOpacity onPress={() => handleDeleteExpense(expense)} >
-                        <FontAwesome name="trash" size={22} color="gray" />
+                        <FontAwesome name="trash" size={22} color={isDarkMode ? '#2d2d2d' : 'gray'} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -136,8 +134,8 @@ export default function Home() {
         </ScrollView>
       )}
 
-      <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
-      <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} />
+      <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} theme={{ ...theme, isDarkMode: isDarkMode }} />
+      <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} theme={{ ...theme, isDarkMode: isDarkMode }} />
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     justifyContent: 'space-between',
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     width: '85%',
     borderRadius: 10,
     padding: 10,
@@ -27,15 +27,16 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginTop: 10,
+    marginBottom: 14,
     display: 'flex',
     gap: 8,
-    
+
   },
   h1: {
     textAlign: 'center',
     fontSize: 24,
     color: 'black',
-    fontWeight:'500'
+    fontWeight: '500'
   },
   h2: {
     textAlign: 'center',

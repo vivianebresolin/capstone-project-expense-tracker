@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import FloatingButton from "../../components/FloatingButton";
 import AddExpenseModal from "../../components/AddExpenseModal";
 import EditExpenseModal from "../../components/EditExpenseModal";
 import FilterButton from "../../components/FilterButton";
 import TotalSpentCard from '../../components/TotalSpentCard';
-import { useExpenses } from '../../context/expensesContext';
 import CategoriesDropdown from "../../components/CategoriesDropdown";
-import { FontAwesome } from '@expo/vector-icons';
+import { useExpenses } from '../../context/expensesContext';
+import { useTheme } from '../../context/themeContext';
 import { formatDateString } from '../../utils/utils';
 import styles from "./styles";
-import { useTheme } from '../../context/themeContext';
 
 export default function Home() {
   const {
@@ -134,8 +134,8 @@ export default function Home() {
         </ScrollView>
       )}
 
-      <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} />
-      <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} />
+      <AddExpenseModal isModalVisible={modalVisible} closeModal={setModalVisible} theme={{ ...theme, isDarkMode: isDarkMode }} />
+      <EditExpenseModal isEditModalVisible={editModalVisible} closeEditModal={setEditModalVisible} expenseToEdit={editedExpense} theme={{ ...theme, isDarkMode: isDarkMode }} />
       <FloatingButton onPress={handlePressAddExpense} iconName={'plus'} />
     </View>
   );

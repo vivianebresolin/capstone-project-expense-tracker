@@ -34,10 +34,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 16,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 9,
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.2,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   categoryAmountText: {
     fontSize: 20,

@@ -1,9 +1,12 @@
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { useExpenses } from "../../../../context/expensesContext";
+import { useTheme } from "../../../../context/themeContext";
+import styles from "./styles";
 
 export default function AppBarChart() {
   const { expenses } = useExpenses();
+  const { theme, isDarkMode } = useTheme();
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   // Filter expenses for the current year
@@ -41,8 +44,8 @@ export default function AppBarChart() {
   const maxExpenseAmount = Math.max(...Object.values(monthlyExpenses));
 
   return (
-    <>
-      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 25, marginTop: 10 }}>Monthly Expenses in {currentYear}</Text>
+    <View style={[styles.container, isDarkMode && { backgroundColor: theme.color }]}>
+      <Text style={styles.barChartTitle}>Monthly Expenses in {currentYear}</Text>
       <BarChart
         showFractionalValue
         showYAxisIndices
@@ -51,6 +54,6 @@ export default function AppBarChart() {
         data={barData}
         isAnimated
       />
-    </>
+    </View>
   );
 }

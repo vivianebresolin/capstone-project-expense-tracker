@@ -104,13 +104,13 @@ export default function Form({ closeModal, modalVisible }) {
     return (
       <View style={styles.containerSavingExpense}>
         <ActivityIndicator size="large" />
-        <Text style={styles.txtSavingExpense}>Saving new expense...</Text>
+        <Text style={[styles.txtSavingExpense, isDarkMode && { color: theme.color }]}>Saving new expense...</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.formContainer, { backgroundColor: theme.backgroundColor }]}>
+    <View style={styles.formContainer}>
       <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>Amount*:</Text>
       <TextInput
         style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}

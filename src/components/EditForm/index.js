@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Plat
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { useExpenses } from '../../context/expensesContext';
+import { useTheme } from '../../context/themeContext';
 import { formatDateString, parseStringToFloat, formatDateToDB } from '../../utils/utils';
 import * as db from '../../database/index';
 import styles from "./styles";
@@ -30,6 +31,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
   const [isEditingExpense, setIsEditedExpense] = useState(false);
   const isAndroid = Platform.OS === 'android';
   const { editExpenseInList } = useExpenses();
+  const { theme, isDarkMode } = useTheme();
   const [category, setSelectedCategory] = useState(expenseToEdit.category);
   const categories = ['Home', 'Food', 'Transit', 'Shopping', 'Others'];
 
@@ -45,7 +47,7 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       return;
     }
 
-    if (amount === expenseToEdit.amount && description === expenseToEdit.description && formatDateToDB(selectedDate) === expenseToEdit.date && category === expenseToEdit.category) {
+    if (parseStringToFloat(amount) === expenseToEdit.amount && description === expenseToEdit.description && formatDateToDB(selectedDate) === expenseToEdit.date && category === expenseToEdit.category) {
       Alert.alert('Edit expense', 'There is no new data to save.');
       return;
     }
@@ -131,25 +133,25 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
     return (
       <View style={styles.containerSavingExpense}>
         <ActivityIndicator size="large" />
-        <Text style={styles.txtSavingExpense}>Updating the expense...</Text>
+        <Text style={[styles.txtSavingExpense, isDarkMode && { color: theme.color }]}>Updating the expense...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.formContainer}>
-      <Text style={styles.label}>New Amount:</Text>
+      <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>New Amount:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}
         keyboardType='numeric'
         placeholder="Enter amount"
         value={amount || expenseToEdit.amount}
         onChangeText={(text) => setAmount(text)}
         maxLength={17}
       />
-      <Text style={styles.label}>New Description:</Text>
+      <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>New Description:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}
         placeholder="Enter description"
         value={description || expenseToEdit.description}
         onChangeText={(text) => setDescription(text)}
@@ -157,10 +159,10 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       />
 
       <View>
-        <Text style={styles.label}>New Date:</Text>
+        <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>New Date:</Text>
         {!showDatePicker && (
           <TouchableOpacity onPress={toggleDatePicker}>
-            <View style={styles.input}>
+            <View style={[styles.input, isDarkMode && { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.dateText}>{formatDateString(expenseToEdit.date)}</Text>
             </View>
           </TouchableOpacity>
@@ -189,8 +191,8 @@ export default function EditForm({ closeEditModal, isEditModalVisible, expenseTo
       </View>
 
       <View>
-        <Text style={styles.label}>New Category:</Text>
-        <View style={[styles.input, styles.pickerSelect]}>
+        <Text style={[styles.label, isDarkMode && { color: theme.color, fontWeight: '700' }]}>New Category:</Text>
+        <View style={[styles.input, styles.pickerSelect, isDarkMode && { backgroundColor: '#FFFFFF' }]}>
           <RNPickerSelect
             placeholder={{ label: "Select a category...", value: null }}
             items={categories.map(category => ({ label: category, value: category }))}

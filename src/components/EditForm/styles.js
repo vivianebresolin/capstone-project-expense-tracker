@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
+
+const isAndroid = Platform.OS === 'android'
 
 const styles = StyleSheet.create({
   formContainer: {
@@ -67,6 +69,7 @@ const styles = StyleSheet.create({
   },
   pickerSelect: {
     padding: 0,
+    paddingLeft: isAndroid ? 0 : 10,
     justifyContent: 'center'
   }
 });

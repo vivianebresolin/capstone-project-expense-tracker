@@ -4,7 +4,6 @@ import Form from "../Form";
 import styles from "./styles";
 
 export default function AddExpenseModal({ isModalVisible, closeModal, theme }) {
-  console.log(theme)
 
   return (
     <View styles={{ flex: 1 }}>

@@ -7,7 +7,6 @@ import { useTheme } from '../../context/themeContext';
 import styles from './styles';
 
 export default function EditProfile({ route, navigation }) {
-  // const { name, address, profileImage} = route.params;
   const { theme, isDarkMode } = useTheme();
   const [profilePhoto, setProfilePhoto] = useState(null);
 

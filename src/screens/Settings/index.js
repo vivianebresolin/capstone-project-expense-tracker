@@ -1,5 +1,7 @@
 import styles from "./styles";
 import React, { useState } from 'react';
+import { useExpenses } from '../../context/expensesContext';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -16,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../context/themeContext";
 
 export default function Settings() {
+  const {deleteAllData} = useExpenses();
   const navigation = useNavigation();
   const [form, setForm] = useState({
     emailNotifications: true,
@@ -42,6 +45,30 @@ export default function Settings() {
     Linking.openURL(websiteUrl);
   };
 
+  const handleDeleteAllData =() =>{
+    Alert.alert(
+      'Delete All Expense',
+      'Are you sure you want to delete all expenses?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              await deleteAllData();
+              Alert.alert('Delete expenses', 'Expenses was deleted with success!');
+            } catch (error) {
+              Alert.alert('Error', `Error trying to delete expense: ${error}`);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? theme.backgroundColor : '#fff' }}>
       <View style={styles.container}>
@@ -113,16 +140,11 @@ export default function Settings() {
 
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                // handle onPress
-              }}
+              onPress={handleDeleteAllData}
               style={rowStyles}>
               <Text style={styles.rowLabel}>Clear all data</Text>
               <View style={styles.rowSpacer} />
-              <FeatherIcon
-                color="#9e9e9e"
-                name="chevron-right"
-                size={20} />
+             
             </TouchableOpacity>
           </View>
         </ScrollView>

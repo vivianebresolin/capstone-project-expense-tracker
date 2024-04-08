@@ -1,4 +1,4 @@
 import { getAllExpenses } from "./read";
-import { addExpense, updateExpense, deleteExpense } from "./write";
+import { addExpense, updateExpense, deleteExpense, deleteAllData } from "./write";
 
-export { getAllExpenses, addExpense, updateExpense, deleteExpense }; 
+export { getAllExpenses, addExpense, updateExpense, deleteExpense, deleteAllData }; 

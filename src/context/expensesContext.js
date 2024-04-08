@@ -11,11 +11,11 @@ export const ExpensesProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [isDataLoaded, setDataLoaded] = useState(false);
   const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+  const [isDeletingData, setIsDeletingData] = useState(false);
   const [totalSpent, setTotalSpent] = useState(0);
   const [selectedButton, setSelectedButton] = useState('All Expenses');
   const [headerText, setHeaderText] = useState('All Expenses');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
-  const categories = ['All Categories', 'Hone', 'Food', 'Transportation', 'Shopping', 'Others'];
 
   const addExpenseToTheList = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -50,6 +50,22 @@ export const ExpensesProvider = ({ children }) => {
     } catch (error) {
       console.error('Error deleting expense:', error);
       Alert.alert('Error', 'Failed to delete expense.');
+    }
+  };
+
+  const deleteAllData = async () => {
+    try {
+      setIsDeletingData(true);
+      await db.deleteAllData();
+      console.log('All data deleted successfully');
+      setExpenses([]);
+      setFilteredExpenses([]);
+      setTotalSpent(0);
+    } catch (error) {
+      console.error('Error deleting data:', error);
+      throw error;
+    } finally {
+      setIsDeletingData(false); 
     }
   };
 
@@ -124,8 +140,10 @@ export const ExpensesProvider = ({ children }) => {
           addExpenseToTheList,
           editExpenseInList,
           deleteExpenseFromList,
+          deleteAllData,
           isDataLoaded,
           filteredExpenses,
+          isDeletingData, 
           setFilteredExpenses,
           displayExpensesList,
           totalSpent,

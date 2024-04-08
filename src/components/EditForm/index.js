@@ -8,17 +8,19 @@ import { formatDateString, parseStringToFloat, formatDateToDB } from '../../util
 import * as db from '../../database/index';
 import styles from "./styles";
 
-const { format: formatCurrency } = Intl.NumberFormat('en-CA', {
-  currency: 'CAD',
-  style: 'currency',
-});
+function useAmountInput() {
+  const [amount, setAmount] = useState('');
 
-function useAmountInput(amountToEdit) {
-  const [amount, setAmount] = useState(amountToEdit);
   function handleChange(value) {
-    const decimal = Number(value.replace(/\D/g, '')) / 100;
-    setAmount(formatCurrency(decimal || 0).replace('$\xa0', ''));  // '$\xa0' is used as a string to represent the currency symbol for the Canadian Dollar with a non-breaking space between the symbol and the amount
+    // Regular expression to match positive numbers
+    const regex = /^\d*\.?\d*$/;
+    
+    // Check if the input matches the regex
+    if (regex.test(value)) {
+      setAmount(value);
+    }
   }
+
   return [amount, handleChange];
 }
 

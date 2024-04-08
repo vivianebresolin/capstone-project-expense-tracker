@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import FloatingButton from "../../components/FloatingButton";
@@ -15,6 +15,7 @@ import styles from "./styles";
 export default function Home() {
   const {
     isDataLoaded,
+    isDeletingData, 
     deleteExpenseFromList,
     filteredExpenses,
     displayExpensesList,
@@ -28,18 +29,32 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [editModalVisible, setEditModalVisible] = useState(null);
   const [editedExpense, setEditedExpense] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+
   const categoryIcons = { Home: 'home', Food: 'cutlery', Transit: 'car', Shopping: 'shopping-cart', Others: 'money' };
+  useEffect(() => {
+    if (isDeletingData) {
+      setLoading(true); 
+    } else {
+      setLoading(false);
+    }
+  }, [isDeletingData]);
 
   useEffect(() => {
-    displayExpensesList(selectedButton, selectedCategory);
-  }, [selectedButton, selectedCategory]);
+    if(!isDeletingData){
+      displayExpensesList(selectedButton, selectedCategory);
+    }
+  }, [isDeletingData, selectedButton, selectedCategory]);
+
+
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   };
+
   const handlePressAddExpense = () => {
     setModalVisible(true);
-  }
+  };
 
   const handleEditExpense = (expense) => {
     setEditedExpense(expense);
@@ -71,7 +86,7 @@ export default function Home() {
     );
   };
 
-  if (!isDataLoaded) {
+  if (!isDataLoaded || isLoading) {
     return (
       <View style={styles.loadingIndicatorContainer}>
         <ActivityIndicator size="large" color="#0076FF" />
